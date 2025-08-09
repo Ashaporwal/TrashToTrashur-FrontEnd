@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://trashtotrashur-backend.onrender.com";
 
 export default {
   SIGN_UP: BASE_URL + "/user/signup",
