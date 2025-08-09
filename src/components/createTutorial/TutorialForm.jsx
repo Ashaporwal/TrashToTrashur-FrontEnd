@@ -35,7 +35,7 @@ function TutorialForm() {
     form.append("image", imageFile);
 
     try {
-      const res = await axios.post("http://localhost:3000/tutorials/upload", form);
+      const res = await axios.post( "https://trashtotrashur-backend.onrender.com/tutorials/upload", form);
       console.log("Tutorial uploaded:", res.data);
       setMessage("Tutorial uploaded successfully!");
       setFormData({

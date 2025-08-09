@@ -18,7 +18,7 @@ function Material() {
   // Fetch all materials from the server
   const fetchMaterials = async () => {
     try {
-      const res = await fetch("http://localhost:3000/material/getall");
+      const res = await fetch("https://trashtotrashur-backend.onrender.com/material/getall");
       const data = await res.json();
       setMaterials(data.allmaterial || []);
     } catch (err) {
@@ -51,7 +51,7 @@ function Material() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/material/create", {
+      const res = await fetch("https://trashtotrashur-backend.onrender.com/material/create", {
         method: "POST",
         body: formData,
       });
@@ -165,7 +165,7 @@ function Material() {
             <div key={mat._id} className="material-card">
               {mat.images?.[0] && (
                 <img
-                  src={`http://localhost:3000${mat.images[0]}`}
+                  src={`https://trashtotrashur-backend.onrender.com/${mat.images[0]}`}
                   alt={mat.title}
                 />
               )}

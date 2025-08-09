@@ -5,7 +5,6 @@ import { getCurrentUser } from "../auth/Auth";
 import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 
-// ✅ Dashboard Component
 function UserProfileDashboard({ profilePic, user }) {
   return (
     <div
@@ -53,7 +52,7 @@ function UserProfileDashboard({ profilePic, user }) {
           {user?.role}
         </p>
         <div style={{ marginTop: "20px", fontSize: "14px", color: "#555" }}>
-          🎉 Your profile is updated successfully!
+           Your profile is updated successfully!
         </div>
       </div>
     </div>
@@ -90,22 +89,22 @@ function UserProfile() {
       let formData = new FormData();
       formData.append("imageName", file);
 
-      let response = await axios.patch(
-        `${EndPoint.UPLOAD_FILE}/${user._id}`,
-        formData
-      );
+   let response = await axios.patch(
+  `https://trashtotrashur-backend.onrender.com/file/upload/${user._id}`,
+  formData
+);
 
       toast.success("Profile picture uploaded successfully!");
       setProfilePic(response.data.imageUrl);
       setPreview(null);
-      setShowDashboard(true); // ✅ Show dashboard
+      setShowDashboard(true); 
     } catch (err) {
       console.error(err);
       toast.error("Oops! Something went wrong");
     }
   };
 
-  // ✅ Agar dashboard dikhana hai
+ 
   if (showDashboard) {
     return (
       <>
@@ -118,7 +117,7 @@ function UserProfile() {
     );
   }
 
-  // ✅ Default Upload UI
+
   return (
     <>
       <ToastContainer />
