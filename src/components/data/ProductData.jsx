@@ -1,6 +1,6 @@
-// src/data/productData.js
+
 const productData = [
-  // 👜 Bags & Accessories
+
   {
     id: 1,
     title: "Recycled Tote Bag",
