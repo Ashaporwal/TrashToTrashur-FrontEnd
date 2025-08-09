@@ -5,11 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import Home from "./components/Home";
-import Product from './components/Product/Product';
+import Product from './components/product/Product';
 import Contact from './components/contact/Contact';
 import Material from './components/material/Material';
 import SignUp from './components/signUP/SignUp';
 import SignIn from './components/signIn/SignIn';
+import Login from './components/login/Login';
 
 import UserProfile from './components/userProfile/UserProfile';
 // import UserProfile from './components/userProfile/UserProfile';
