@@ -20,7 +20,7 @@ import Product1 from './components/product/Product1';
 import TutorialForm from './components/createTutorial/TutorialForm';
 import Auth from "./components/auth/Auth";
 import UserProfileDashBoard from './components/userProfile/UserProfileDashBoard';
-import BuyNow from './components/buyNow/buyNow';
+import BuyNow from './components/buyNow/BuyNow';
 
 function App() {
   return <>
