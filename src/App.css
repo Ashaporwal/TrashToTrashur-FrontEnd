@@ -1,0 +1,28 @@
+/* .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 10px;
+  
+}
+
+.nav-items {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.logo {
+  flex: 0;
+}
+
+.spacer {
+  width: 80px; 
+}
+
+
+ */
