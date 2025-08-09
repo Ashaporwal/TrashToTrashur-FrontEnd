@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../Header";
 import Footer from "../Footer";
 import { useNavigate } from "react-router-dom";
+import productData from "../data/productData";
 
 function Product() {
   const navigate = useNavigate();
