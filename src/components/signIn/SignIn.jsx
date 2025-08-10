@@ -21,7 +21,8 @@ import 'react-toastify/dist/ReactToastify.css';
       e.preventDefault();
     try{
     if (state.email && state.password) {
-      let response = await axios.post(EndPoint.SIGN_IN,state);
+let response = await axios.post(EndPoint.SIGN_IN, state);
+
       sessionStorage.setItem("current-user",JSON.stringify(response.data.user));
       const user = response.data.user;
       
