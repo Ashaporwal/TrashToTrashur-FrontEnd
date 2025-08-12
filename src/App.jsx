@@ -38,8 +38,13 @@ function App() {
         <Route path="/tutorial" element={<Auth><TutorialForm/></Auth>}/>
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
-        <Route path="/profile" element={<UserProfileDashBoard/>}/>
+        {/* <Route path="/profile" element={<UserProfileDashBoard/>}/> */}
         <Route path='/buy-now' element={<BuyNow/>}/>
+        <Route path="/user-profile" element={<UserProfile />} />
+
+        <Route path="/user" element={<UserProfile />} />
+<Route path="/userdashboard" element={<UserProfileDashBoard />} />
+
         {/* <Route path='/login' element={<Login/>}/> */}
       </Routes>
     </BrowserRouter>
