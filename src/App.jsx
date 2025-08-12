@@ -21,6 +21,7 @@ import TutorialForm from './components/createTutorial/TutorialForm';
 import Auth from "./components/auth/Auth";
 import UserProfileDashBoard from './components/userProfile/UserProfileDashBoard';
 import BuyNow from './components/buyNow/BuyNow';
+import { Logout } from '@mui/icons-material';
 
 function App() {
   return <>
@@ -41,9 +42,10 @@ function App() {
         {/* <Route path="/profile" element={<UserProfileDashBoard/>}/> */}
         <Route path='/buy-now' element={<BuyNow/>}/>
         <Route path="/user-profile" element={<UserProfile />} />
+        <Route path='/logout' element={<Logout/>}></Route>
 
-        <Route path="/user" element={<UserProfile />} />
-<Route path="/userdashboard" element={<UserProfileDashBoard />} />
+        {/* <Route path="/user" element={<UserProfile />} /> */}
+{/* <Route path="/userdashboard" element={<UserProfileDashBoard />} /> */}
 
         {/* <Route path='/login' element={<Login/>}/> */}
       </Routes>

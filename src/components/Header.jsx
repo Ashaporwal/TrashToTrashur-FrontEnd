@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { colors } from "@mui/joy";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -73,12 +74,16 @@ useEffect(() => {
           </>
         ) : (
           <>
-            <Link to="/userdashboard" style={{ margin: "0 10px" }}>
+            {/* <Link to="/userdashboard" style={{ margin: "0 10px" }}>
               Dashboard
-            </Link>
-            <button onClick={handleLogout} style={{ margin: "0 10px", cursor: "pointer" }}>
+            </Link> */}
+            
+            {/* <button onClick={handleLogout} style={{ margin: "0 10px", cursor: "pointer" }}> */}
+            <Link to="/logout" style={{color:"black",textDecoration:"none",margin:'0 10px'}}>
               Logout
-            </button>
+            </Link>
+            
+            
           </>
         )}
 
