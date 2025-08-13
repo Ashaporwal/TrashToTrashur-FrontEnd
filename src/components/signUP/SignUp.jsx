@@ -47,8 +47,10 @@ function SignUp() {
   // console.log({ username, email, password });
     e.preventDefault();
     try {
+      console.log("Inside try signup");
+      
       setIsLoading(true);
-      let response = await axios.post(EndPoint.SIGN_UP, { ...formData, role });
+      let response = await axios.post(EndPoint.SIGN_UP, {formData, role });
       // console.log("Signing up as", role, formData);
       console.log("Sending data:", { ...formData, role });
       toast.success( "Signup successful!");
@@ -62,7 +64,7 @@ function SignUp() {
       });
    
     } catch (err) {
-      console.log("SignUp error:",err.response?.data||err.message);
+      console.log("SignUp error:",err);
 
       toast.error( "Signup failed")
     }

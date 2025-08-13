@@ -29,14 +29,18 @@ function App() {
  
       <Routes>
         <Route path="/" element={<DefaultView />} />
-        <Route path="/home" element={<Auth><Home /></Auth>} />
+        {/* <Route path="/home" element={<Auth><Home /></Auth>} /> */}
+                <Route path="/home" element={<Home />} />
         <Route path="/product" element={<Product/>} />
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/material" element={<Material/>}/>
         <Route path='/user' element={<UserProfile/>}/>
-        <Route path='/diyTutorials' element={<Auth><DiyTutorials/></Auth>}/>
-        <Route path='/product1' element={<Auth><Product1/></Auth>}/>
-        <Route path="/tutorial" element={<Auth><TutorialForm/></Auth>}/>
+        {/* <Route path='/diyTutorials' element={<Auth><DiyTutorials/></Auth>}/> */}
+                <Route path='/diyTutorials' element={<DiyTutorials/>}/>
+        {/* <Route path='/product1' element={<Auth><Product1/></Auth>}/> */}
+                <Route path='/product1' element={<Product1/>}/>
+        {/* <Route path="/tutorial" element={<Auth><TutorialForm/></Auth>}/> */}
+                <Route path="/tutorial" element={<TutorialForm/>}/>
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
         {/* <Route path="/profile" element={<UserProfileDashBoard/>}/> */}
