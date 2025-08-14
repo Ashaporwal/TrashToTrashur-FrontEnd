@@ -1,93 +1,95 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import EndPoint from "../../apis/EndPoint";
 import 'react-toastify/dist/ReactToastify.css';
-
+import EndPoint from "../../apis/EndPoint";
+import "./SignIn.css";
 
 function SignIn() {
-
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [state, setState] = useState({
-    email: "",
-    password: ""
-  });
+  const [state, setState] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (state.email && state.password) {
-        console.log("Inside try if name and passsword true");
-        
-        let response = await axios.post(EndPoint.SIGN_IN, state);
-        // console.log("before api Inside try if name and passsword true = ",response.data.token);
-
-        // sessionStorage.setItem("current-user",JSON.stringify(response.data.user));
+      if(state.email && state.password){
+        const response = await axios.post(EndPoint.SIGN_IN, state);
         const user = response.data.user;
         sessionStorage.setItem("token", JSON.stringify(response.data.token));
-        sessionStorage.setItem("current-user", JSON.stringify(response.data.user));
-
+        sessionStorage.setItem("current-user", JSON.stringify(user));
         toast.success("Logged in successfully!");
-
-        if (user.role === "buyer") {
-          setTimeout(() => navigate("/home", 1000))
-        } else {
-          setTimeout(() => navigate("/product"), 1000);
-        }
+        if(user.role==="buyer") setTimeout(()=>navigate("/home"),1000);
+        else setTimeout(()=>navigate("/product"),1000);
+      } else {
+        toast.error("Please enter valid email and password");
       }
-      else
-        toast.error("Please enter valid email..");
-
-    }
-    catch (err) {
-      console.log(err);
-      toast.error(err.response?.data?.error || "SOmething went Wrong");
+    } catch(err){
+      toast.error(err.response?.data?.error || "Something went wrong");
     }
   }
 
   return (
     <>
       <ToastContainer />
-      <div className="signup-container">
-        <form className="signup-form" onSubmit={handleSubmit}>
-          <h2>Sign In to Your Account</h2>
+      <div className="signin-container">
+        {/* Left Illustration */}
+        <div className="signin-left">
+    {/* <img 
+  src="/images/login.png" 
+  alt="Treasure Illustration" 
+  style={{ width: "400px", height: "400px" }}  */}
+  <img 
+  src="/images/login.png" 
+  alt="Treasure Illustration" 
+  className="login-image"
+/>
+        </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={state.email}
-            onChange={(e) => setState({ ...state, email: e.target.value })}
-            required
-          />
+        {/* Right Form */}
+        <div className="signin-right">
+          <form className="signin-form" onSubmit={handleSubmit}>
+            <h2>Login</h2>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            // value={state.password}
-            onChange={(e) => setState({ ...state, password: e.target.value })}
-            required
-          />
-          <button type="submit">Sign In</button>
+            <div className="input-field">
+              <input
+                type="email"
+                placeholder="Email"
+                value={state.email}
+                onChange={e=>setState({...state,email:e.target.value})}
+                required
+              />
+              <span className="input-icon">📧</span>
+            </div>
 
-          {!sessionStorage.getItem("current-user") && (
-            <p style={{ textAlign: "center" }}>
+            <div className="input-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={state.password}
+                onChange={e=>setState({...state,password:e.target.value})}
+                required
+              />
+              <span className="input-icon" onClick={()=>setShowPassword(!showPassword)}>
+                {showPassword ? "🙈" : "👁️"}
+              </span>
+            </div>
+
+            <button type="submit" className="login-btn">Log In</button>
+
+            <p className="or-text">Or Continue With</p>
+            <div className="social-login">
+              <button className="social-btn google">G</button>
+              <button className="social-btn facebook">F</button>
+              <button className="social-btn apple"></button>
+            </div>
+
+            <p className="signup-link">
               Don’t have an account? <Link to="/signup">Sign Up</Link>
             </p>
-          )}
-
-          {sessionStorage.getItem("current-user") && (
-            <p style={{ textAlign: "center",textDecoration:"none",alignItems:"center" }}>
-              <Link to="/logout">Log Out</Link>
-            </p>
-          )}
-
-        </form>
+          </form>
+        </div>
       </div>
     </>
   );

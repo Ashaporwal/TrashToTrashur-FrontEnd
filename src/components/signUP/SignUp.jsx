@@ -1,12 +1,10 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import EndPoint from '../../apis/EndPoint';
-import "./SignUp.css";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
+import "./SignUp.css";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -16,133 +14,141 @@ function SignUp() {
     email: "",
     password: "",
     contact: "",
-    role:"crafter",
+    role: "crafter",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
   const handleRoleChange = (newRole) => {
-  setRole(newRole);
-  setFormData({
-    name: "",
-    email: "",
-    password: "",
-    contact: "",
-    role: newRole,  // add this line
-  });
-}
+    setRole(newRole);
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      contact: "",
+      role: newRole,
+    });
+  }
 
-  // const handleRoleChange = (newRole) => {
-  //   setRole(newRole);
-  //   setFormData({ name: "", email: "", password: "", contact: "" });
-  // }
-
-
-
-
-  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (e) => {
-  // console.log({ username, email, password });
     e.preventDefault();
+    setIsLoading(true);
+
     try {
-      console.log("Inside try signup");
-      
-      setIsLoading(true);
-      let response = await axios.post(EndPoint.SIGN_UP, {formData, role });
-      // console.log("Signing up as", role, formData);
-      console.log("Sending data:", { ...formData, role });
-      toast.success( "Signup successful!");
-      setTimeout(() => navigate("/home"), 2000); 
+      await axios.post(EndPoint.SIGN_UP, { ...formData },{withCredentials:true});
+      toast.success("Your account has been created!");
+      setTimeout(() => navigate("/signIn"), 2000);
+
+      // Reset form
       setFormData({
         name: "",
         email: "",
         password: "",
         contact: "",
-        role:role
+        role,
       });
-   
-    } catch (err) {
-      console.log("SignUp error:",err);
 
-      toast.error( "Signup failed")
+    } catch (error) {
+      console.error("Signup failed:", error);
+      toast.error("Something went wrong. Please try again.");
     }
-    // toast.success(response.data.message);
-    // setFormData({
-    //   name: "",
-    //   email: "",
-    //   password: "",
-    //   contact: ""
-    // });
 
-    // catch(err){
-    //   console.log(err);
-    //   toast.error("Oops! something went Wrong..");
-    // }
     setIsLoading(false);
   }
-  return <>
-    <ToastContainer />
-    <div className="signup-container">
-      <div className="role-tabs">
-        <button className={role === "crafter" ? "active" : ""} onClick={() => handleRoleChange("crafter")}>Crafter</button>
-        <button className={role === "buyer" ? "active" : ""} onClick={() => handleRoleChange("buyer")}>Buyer</button>
+
+  return (
+    <>
+      <ToastContainer />
+      <div className="signup-container">
+
+        {/* Left Illustration */}
+        <div className="signup-left">
+        <img 
+  src="/images/login.png" 
+  alt="Treasure Illustration" 
+  className="login-image"
+/>
+        </div>
+
+        {/* Right Form */}
+        <div className="signup-right">
+          <form className="signup-form" onSubmit={handleSubmit}>
+            
+            <h2>{role === "crafter" ? "Join as a Crafter" : "Sign Up as a Buyer"}</h2>
+
+            {/* Role Selection */}
+            <div className="role-tabs">
+              <button 
+                type="button" 
+                className={role === "crafter" ? "active" : ""} 
+                onClick={() => handleRoleChange("crafter")}>
+                Crafter
+              </button>
+              <button 
+                type="button" 
+                className={role === "buyer" ? "active" : ""} 
+                onClick={() => handleRoleChange("buyer")}>
+                Buyer
+              </button>
+            </div>
+
+            {/* Input Fields */}
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+              autoComplete="username"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+                autoComplete="new-password"
+            />
+            <input
+              type="text"
+              name="contact"
+              placeholder="Contact Number"
+              value={formData.contact}
+              onChange={handleInputChange}
+              required
+            />
+
+            <button type="submit">
+              {isLoading ? "Creating Account..." : "Create Account"}
+            </button>
+
+            <p className="login-link">
+              Already have an account? <Link to="/signIn">Sign In</Link>
+            </p>
+          </form>
+        </div>
       </div>
-
-     <form className="signup-form" onSubmit={handleSubmit}>
-  <h2>{role === "crafter" ? "Join as a Crafter" : "Sign Up as a Buyer"}</h2>
-
-  <input
-    type="text"
-    name="name"
-    placeholder="Full Name"
-    value={formData.name}
-    onChange={handleInputChange}
-    required
-  />
-  <input
-    type="email"
-    name="email"
-    placeholder="Email"
-    value={formData.email}
-    onChange={handleInputChange}
-    required
-  />
-  <input
-    type="password"
-    name="password"
-    placeholder="Password"
-    value={formData.password}
-    onChange={handleInputChange}
-    required
-  />
-  <input
-    type="text"
-    name="contact"
-    placeholder="Contact Number"
-    value={formData.contact}
-    onChange={handleInputChange}
-    required
-  />
-
-  <button type="submit">{isLoading ? "Creating..." : "Create Account"}</button>
-
-  <p style={{ textAlign: "center" }}>
-    Already have an account? <Link to="/signIn">Sign In</Link>
-  </p>
-</form>
-
-
-
-    </div>
-
-    {/* ) */}
-  </>
-
+    </>
+  );
 }
 
 export default SignUp;
+
 
 
 
