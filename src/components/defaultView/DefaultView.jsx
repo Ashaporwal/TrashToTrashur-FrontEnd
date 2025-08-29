@@ -125,7 +125,7 @@ function DefaultView() {
         ))}
       </div>
 
-      {/* Call-to-Action Section */}
+  
       <div
         style={{
           backgroundColor: "lightgreen",

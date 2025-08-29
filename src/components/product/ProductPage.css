@@ -1,0 +1,50 @@
+.product-page-container {
+  display: grid;
+  grid-template-columns: 0.25fr 1fr; /* Sidebar 25%, products 75% */
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Sidebar styling */
+.sidebar {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.sidebar h3 {
+  margin-bottom: 1rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 0.5rem 0;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sidebar li:hover {
+  color: #22cfff;
+}
+
+.sidebar .active {
+  font-weight: bold;
+  color: #22f0ff;
+}
+
+.sidebar .reset {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* Product grid styling */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}

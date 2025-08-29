@@ -6,10 +6,10 @@
   overflow: hidden;
 }
 
-/* Left Illustration */
+
 .signin-left {
   flex: 1;
-  background-color: #FADCD9; /* pastel pink */
+  background-color: "#FFF9F0"; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -25,7 +25,6 @@
   object-fit: contain;
 }
 
-/* Right Form */
 .signin-right {
   flex: 1;
   display: flex;
@@ -72,7 +71,7 @@
   padding: 14px;
   border-radius: 10px;
   border: none;
-  background-color: #FF6B6B;
+  background-color: #B28228;
   color: #fff;
   font-size: 16px;
   margin-top: 10px;
@@ -114,7 +113,7 @@
   font-size: 14px;
 }
 .signup-link a {
-  color: #FF6B6B;
+  color: #B28228;
   text-decoration: none;
   font-weight: 600;
 }

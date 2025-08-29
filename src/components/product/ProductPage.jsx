@@ -1,40 +1,88 @@
-// ProductPage.jsx
-import React from "react";
-import productData from "./ProductData";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import ProductCard from "./ProductCard";
+import Header from "../Header";
+import Footer from "../Footer";
+import { BASE_URL } from "../../apis/EndPoint";
+import "./ProductPage.css";
 
-function ProductPage() {
-  const products = [
-    {
-      id: 1,
-      title: "Recycled Tote Bag",
-      description: "Made from old jeans and eco-friendly fabrics.",
-      price: 349,
-      image: "/images/4.jpeg",
-    },
-    {
-      id: 2,
-      title: "Upcycled Wooden Lamp",
-      description: "Crafted from reclaimed wood.",
-      price: 899,
-      image: "/images/5.jpg",
-    },
-  ];
+const ProductPage = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  // Example categories for your “reusable materials” project
+  const categories = ["Paper", "Plastic", "Metal", "Glass", "Wood"];
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/product`);
+        setProducts(response.data.products || response.data || []);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  // Filter products by category
+  const filteredProducts = selectedCategory
+    ? products.filter((p) => p.category === selectedCategory)
+    : products;
 
   return (
-    <div>
-      <h1>Products</h1>
-      <div style={{ display: "flex", gap: "20px" }}>
-        {products.map((product) => (
-          <div key={product.id} style={{ border: "1px solid #ccc", padding: "10px" }}>
-            <img src={product.image} alt={product.title} width="200" />
-            <h3>{product.title}</h3>
-            <p>{product.description}</p>
-            <strong>₹{product.price}</strong>
-          </div>
-        ))}
+    <>
+      <Header />
+
+      <div className="product-page-container">
+        {/* Sidebar */}
+        <div className="sidebar">
+          <h3>Categories</h3>
+          <ul>
+            {categories.map((cat, index) => (
+              <li
+                key={index}
+                className={selectedCategory === cat ? "active" : ""}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </li>
+            ))}
+            <li className="reset" onClick={() => setSelectedCategory("")}>
+              Show All
+            </li>
+          </ul>
+        </div>
+
+        {/* Products */}
+        <div className="product-grid">
+          {loading ? (
+            <p>Loading products...</p>
+          ) : filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <ProductCard
+                key={product._id || product.id}
+                product={product}
+              />
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
+        </div>
       </div>
-    </div>
+
+      <Footer />
+    </>
   );
-}
+};
 
 export default ProductPage;
+
+
+
+
+

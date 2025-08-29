@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./Material.css";
+import Header from '../Header';
 
 function Material() {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     title: "",
     description: "",
     price: "",
@@ -11,166 +12,162 @@ function Material() {
     tags: "",
     submittedBy: ""
   });
-
   const [selectedImage, setSelectedImage] = useState(null);
-  const [materialsList, setMaterialsList] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All");
-  const [craftersList, setCraftersList] = useState([]);
+  const [materials, setMaterials] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [notification, setNotification] = useState(false);
+  const [cart, setCart] = useState([]);
+  const [sideCartOpen, setSideCartOpen] = useState(false);
 
-  const categories = ["All", "Plastic", "Paper", "Fabric", "Metal", "Glass", "Cardboard", "Other"];
+  const categories = ["Plastic", "Paper", "Fabric", "Metal", "Glass", "Cardboard", "Other"];
 
-
-  const loadMaterials = async () => {
+  const fetchMaterials = async () => {
     try {
-      const response = await fetch("https://trashtotrashur-backend.onrender.com/material/getall");
-      const data = await response.json();
-      setMaterialsList(data.allmaterial || []);
-    } catch (error) {
-      console.error("Error fetching materials:", error);
+      const res = await fetch("http://localhost:3000/material/getall");
+      const data = await res.json();
+      setMaterials(data.allmaterial || []);
+    } catch (err) {
+      console.error("Failed to fetch materials:", err);
     }
   };
 
-
-  const loadCrafters = async () => {
+  const fetchUsers = async () => {
     try {
-      const response = await fetch("https://trashtotrashur-backend.onrender.com/user/crafters");
-      const data = await response.json();
-      setCraftersList(data || []);
-    } catch (error) {
-      console.error("Error fetching crafters:", error);
+      const res = await fetch("http://localhost:3000/user/getall");
+      const data = await res.json();
+      setUsers(Array.isArray(data) ? data : data.allUsers || []);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
     }
   };
 
   useEffect(() => {
-    loadMaterials();
-    loadCrafters();
+    fetchMaterials();
+    fetchUsers();
   }, []);
 
-  // Handle input changes in the form
-  const handleInputChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
-  const handleFormSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    const dataToSend = new FormData();
-
-    Object.entries(formData).forEach(([key, value]) => {
-      dataToSend.append(key, value);
-    });
-    dataToSend.append("status", "pending");
-
-    if (selectedImage) {
-      dataToSend.append("image", selectedImage);
-    }
+    const formData = new FormData();
+    Object.entries(form).forEach(([key, value]) => formData.append(key, value));
+    if (selectedImage) formData.append("image", selectedImage);
 
     try {
-      await fetch("https://trashtotrashur-backend.onrender.com/material/create", {
+      await fetch("http://localhost:3000/material/create", {
         method: "POST",
-        body: dataToSend
+        body: formData
       });
-      setFormData({ title: "", description: "", price: "", quantity: "", category: "", tags: "", submittedBy: "" });
+      setForm({
+        title: "",
+        description: "",
+        price: "",
+        quantity: "",
+        category: "",
+        tags: "",
+        submittedBy: ""
+      });
       setSelectedImage(null);
-      loadMaterials();
-    } catch (error) {
-      console.error("Error submitting material:", error);
+      setShowForm(false);
+      setNotification(true);
+      fetchMaterials();
+      setTimeout(() => setNotification(false), 3000);
+    } catch (err) {
+      console.error("Failed to submit material:", err);
     }
+  };
+
+  const addToCart = (material) => {
+    setCart(prev => {
+      const exist = prev.find(item => item._id === material._id);
+      if (exist) return prev;
+      return [...prev, material];
+    });
+    setSideCartOpen(true);
+  };
+
+  const removeFromCart = (id) => {
+    setCart(prev => prev.filter(item => item._id !== id));
   };
 
   return (
     <div className="material-page">
+      <Header/>
 
-      {/* Search and Filter */}
-      <div className="search-filter">
-        <input
-          type="text"
-          placeholder="🔍 Search materials..."
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-        />
-        <div className="filter-pills">
-          {categories.map(cat => (
-            <span
-              key={cat}
-              className={`pill ${categoryFilter === cat ? "active" : ""}`}
-              onClick={() => setCategoryFilter(cat)}
-            >
-              {cat}
-            </span>
-          ))}
+      <button className="add-material-btn" onClick={() => setShowForm(true)}>➕ Add Material</button>
+
+      {notification && <div className="notification">Material added successfully!</div>}
+
+      {showForm && (
+        <div className="form-card">
+          <form onSubmit={handleSubmit}>
+            <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required />
+            <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
+            <input name="price" type="number" placeholder="Price (₹)" value={form.price} onChange={handleChange} required />
+            <input name="quantity" type="number" placeholder="Quantity" value={form.quantity} onChange={handleChange} required />
+            <select name="category" value={form.category} onChange={handleChange} required>
+              <option value="">-- Select Category --</option>
+              {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            </select>
+            <input type="file" accept="image/*" onChange={e => setSelectedImage(e.target.files[0])} />
+            <input name="tags" placeholder="Tags (comma separated)" value={form.tags} onChange={handleChange} />
+            <input 
+              name="submittedBy" 
+              placeholder="Submitted By" 
+              value={form.submittedBy} 
+              onChange={handleChange} 
+              list="usersList" 
+              required 
+            />
+            <datalist id="usersList">
+              {users.map(user => <option key={user._id} value={user.name} data-id={user._id} />)}
+            </datalist>
+            <button type="submit">🚀 Post</button>
+            <button type="button" onClick={() => setShowForm(false)} className="cancel-btn">Cancel</button>
+          </form>
         </div>
-      </div>
+      )}
 
-      {/* Add Material Form */}
-      <div className="form-card">
-        <h3>➕ Add Material</h3>
-        <form onSubmit={handleFormSubmit}>
-          <input name="title" placeholder="Title" value={formData.title} onChange={handleInputChange} required />
-          <textarea name="description" placeholder="Description" value={formData.description} onChange={handleInputChange} required />
-          <input name="price" type="number" placeholder="Price (₹)" value={formData.price} onChange={handleInputChange} required />
-          <input name="quantity" type="number" placeholder="Quantity" value={formData.quantity} onChange={handleInputChange} required />
-          <select name="category" value={formData.category} onChange={handleInputChange} required>
-            <option value="">-- Select Category --</option>
-            {categories.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <input type="file" accept="image/*" onChange={e => setSelectedImage(e.target.files[0])} />
-          <input name="tags" placeholder="Tags (comma separated)" value={formData.tags} onChange={handleInputChange} />
-          <input
-            name="submittedBy"
-            placeholder="Submitted By"
-            value={formData.submittedBy}
-            onChange={handleInputChange}
-            list="craftersList"
-            required
-          />
-          <datalist id="craftersList">
-            {craftersList.map(c => <option key={c._id} value={c.name} />)}
-          </datalist>
-          <button type="submit">🚀 Post</button>
-        </form>
-      </div>
-
-      {/* Material Cards */}
       <div className="materials-grid">
-        {materialsList
-          .filter(mat =>
-            (categoryFilter === "All" || mat.category === categoryFilter) &&
-            mat.title.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-          .map(mat => (
-            <div key={mat._id} className="material-card">
-              <div className="img-wrap">
-                {mat.images?.[0] ? (
-                  <img src={`https://trashtotrashur-backend.onrender.com/${mat.images[0]}`} alt={mat.title} />
-                ) : (
-                  <div className="image-placeholder">No Image</div>
-                )}
-                <span className="price-tag">₹{mat.price}</span>
-                {/* <span className={`status-badge ${mat.status}`}>{mat.status}</span> */}
-
-                {/* Add to Cart button */}
-                {/* <button className="add-to-cart-btn">Add to Cart</button> */}
-              </div>
-              <div className="card-info">
-                <h4>{mat.title}</h4>
-                <p>{mat.description}</p>
-                <small className="category">{mat.category}</small>
-              </div>
+        {materials.map(mat => (
+          <div key={mat._id} className="material-card">
+            <div className="img-wrap">
+              {mat.images?.[0] ? (
+                <img src={`http://localhost:3000${mat.images[0]}`} alt={mat.title} />
+              ) : (
+                <div className="image-placeholder">No Image</div>
+              )}
+              <span className="price-tag">₹{mat.price || 0}</span>
             </div>
-          ))}
+            <div className="card-info">
+              <h4>{mat.title}</h4>
+              <p>{mat.description}</p>
+              <small className="category">{mat.category}</small>
+            </div>
+            <button className="add-cart-btn" onClick={() => addToCart(mat)}>🛒 Add</button>
+          </div>
+        ))}
+      </div>
 
-         <button
-  className="floating-cart-btn"
-  onClick={() => setIsCartOpen(true)}
->
-  <span>🛒</span>
-  <span className="cart-count">1</span>
-</button>
-</div>
-</div>
+      <button className="floating-cart-btn" onClick={() => setSideCartOpen(prev => !prev)}>🛒<span className="cart-count">{cart.length}</span></button>
+
+      <div className={`side-cart ${sideCartOpen ? "open" : ""}`}>
+        <h3>Cart</h3>
+        <ul>
+          {cart.map(item => (
+            <li key={item._id}>
+              {item.title} - ₹{item.price || 0}
+              <button onClick={() => removeFromCart(item._id)}>Remove</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 
@@ -179,10 +176,11 @@ export default Material;
 
 
 
-
 // import React, { useEffect, useState } from "react";
 // import "./Material.css";
+// import Header from '../Header';
 
+// <Header/>
 // function Material() {
 //   const [form, setForm] = useState({
 //     title: "",
@@ -193,16 +191,20 @@ export default Material;
 //     tags: "",
 //     submittedBy: ""
 //   });
-//   const [imageFile, setImageFile] = useState(null);
+//   const [selectedImage, setSelectedImage] = useState(null);
 //   const [materials, setMaterials] = useState([]);
-//   const [search, setSearch] = useState("");
-//   const [filter, setFilter] = useState("All");
-//   const [crafters, setCrafters] = useState([]); // For autocomplete suggestions
+//   const [users, setUsers] = useState([]);
+//   const [showForm, setShowForm] = useState(false);
+//   const [notification, setNotification] = useState(false);
+//   const [cart, setCart] = useState([]);
+//   const [sideCartOpen, setSideCartOpen] = useState(false);
+
+//   const categories = ["Plastic", "Paper", "Fabric", "Metal", "Glass", "Cardboard", "Other"];
 
 //   // Fetch all materials
 //   const fetchMaterials = async () => {
 //     try {
-//       const res = await fetch("https://trashtotrashur-backend.onrender.com/material/getall");
+//       const res = await fetch("http://localhost:3000/material/getall");
 //       const data = await res.json();
 //       setMaterials(data.allmaterial || []);
 //     } catch (err) {
@@ -210,209 +212,38 @@ export default Material;
 //     }
 //   };
 
-//   // Fetch all crafters for autocomplete
-//   const fetchCrafters = async () => {
+//   // Fetch all users
+//   const fetchUsers = async () => {
 //     try {
-//       const res = await fetch("https://trashtotrashur-backend.onrender.com/user/crafters");
+//       const res = await fetch("http://localhost:3000/user/getall");
 //       const data = await res.json();
-//       setCrafters(data || []);
+//       setUsers(Array.isArray(data) ? data : data.allUsers || []);
 //     } catch (err) {
-//       console.error("Failed to fetch crafters:", err);
+//       console.error("Failed to fetch users:", err);
 //     }
 //   };
 
 //   useEffect(() => {
 //     fetchMaterials();
-//     fetchCrafters();
+//     fetchUsers();
 //   }, []);
 
-//   // Handle form input
-//   const handleChange = (e) => {
+//   const handleChange = e => {
 //     const { name, value } = e.target;
-//     setForm((prev) => ({ ...prev, [name]: value }));
+//     setForm(prev => ({ ...prev, [name]: value }));
 //   };
 
-//   // Submit form
-//   const handleSubmit = async (e) => {
+//   const handleSubmit = async e => {
 //     e.preventDefault();
 //     const formData = new FormData();
-//     Object.entries(form).forEach(([k, v]) => formData.append(k, v));
-//     formData.append("status", "pending");
-//     if (imageFile) formData.append("image", imageFile);
+//     Object.entries(form).forEach(([key, value]) => formData.append(key, value));
+//     if (selectedImage) formData.append("image", selectedImage);
 
 //     try {
-//       const res = await fetch("https://trashtotrashur-backend.onrender.com/material/create", {
+//       await fetch("http://localhost:3000/material/create", {
 //         method: "POST",
 //         body: formData
 //       });
-//       await res.json();
-//       setForm({ title: "", description: "", price: "", quantity: "", category: "", tags: "", submittedBy: "" });
-//       setImageFile(null);
-//       fetchMaterials();
-//     } catch (err) {
-//       console.error("Error submitting material:", err);
-//     }
-//   };
-
-//   const categories = ["All", "Plastic", "Paper", "Fabric", "Metal", "Glass", "Cardboard", "Other"];
-
-//   return (
-//     <div className="material-page">
-//       {/* Search + Filters */}
-//       <div className="search-filter">
-//         <input
-//           type="text"
-//           placeholder="🔍 Search materials..."
-//           value={search}
-//           onChange={(e) => setSearch(e.target.value)}
-//         />
-//         <div className="filter-pills">
-//           {categories.map((cat) => (
-//             <span
-//               key={cat}
-//               className={`pill ${filter === cat ? "active" : ""}`}
-//               onClick={() => setFilter(cat)}
-//             >
-//               {cat}
-//             </span>
-//           ))}
-//         </div>
-//       </div>
-
-//       {/* Form */}
-//       <div className="form-card">
-//         <h3>➕ Add Material</h3>
-//         <form onSubmit={handleSubmit}>
-//           <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required />
-//           <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
-//           <input name="price" type="number" placeholder="Price (₹)" value={form.price} onChange={handleChange} required />
-//           <input name="quantity" type="number" placeholder="Quantity" value={form.quantity} onChange={handleChange} required />
-//           <select name="category" value={form.category} onChange={handleChange} required>
-//             <option value="">-- Select Category --</option>
-//             {categories.slice(1).map((c) => (
-//               <option key={c} value={c}>{c}</option>
-//             ))}
-//           </select>
-//           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} />
-//           <input name="tags" placeholder="Tags (comma separated)" value={form.tags} onChange={handleChange} />
-          
-//           {/* Autocomplete for Submitted By */}
-//           <input
-//             name="submittedBy"
-//             placeholder="Submitted By"
-//             value={form.submittedBy}
-//             onChange={handleChange}
-//             list="craftersList"
-//             required
-//           />
-//           <datalist id="craftersList">
-//             {crafters.map((c) => (
-//               <option key={c._id} value={c.name} />
-//             ))}
-//           </datalist>
-
-//           <button type="submit">🚀 Post</button>
-//         </form>
-//       </div>
-
-//       {/* Materials */}
-//       <div className="materials-grid">
-//         {materials
-//           .filter((m) => (filter === "All" || m.category === filter) && m.title.toLowerCase().includes(search.toLowerCase()))
-//           .map((mat) => (
-//             <div key={mat._id} className="material-card">
-//               {mat.images?.[0] && (
-//                 <div className="img-wrap">
-//                   <img src={`https://trashtotrashur-backend.onrender.com/${mat.images[0]}`} alt={mat.title} />
-//                   <span className="price-tag">₹{mat.price}</span>
-//                   <span className={`status-badge ${mat.status}`}>{mat.status}</span>
-//                 </div>
-//               )}
-//               <div className="card-info">
-//                 <h4>{mat.title}</h4>
-//                 <small>{mat.category}</small>
-//               </div>
-//             </div>
-//           ))}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Material;
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from "react";
-// import "./Material.css";
-
-// function Material() {
-//   const [form, setForm] = useState({
-//     title: "",
-//     description: "",
-//     price: "",
-//     quantity: "",
-//     category: "",
-//     tags: "",
-//     submittedBy: ""
-//   });
-
-//   const [imageFile, setImageFile] = useState(null);
-//   const [materials, setMaterials] = useState([]);
-
-//   // Fetch all materials from the server
-//   const fetchMaterials = async () => {
-//     try {
-//       const res = await fetch("https://trashtotrashur-backend.onrender.com/material/getall");
-//       const data = await res.json();
-//       setMaterials(data.allmaterial || []);
-//     } catch (err) {
-//       console.error("Failed to fetch materials:", err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchMaterials();
-//   }, []);
-
-//   // Handle form input change
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setForm((prev) => ({ ...prev, [name]: value }));
-//   };
-
-//   // Handle form submission
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const formData = new FormData();
-//     Object.entries(form).forEach(([key, value]) => {
-//       formData.append(key, value);
-//     });
-
-//     formData.append("status", "pending");
-//     if (imageFile) {
-//       formData.append("image", imageFile);
-//     }
-
-//     try {
-//       const res = await fetch("https://trashtotrashur-backend.onrender.com/material/create", {
-//         method: "POST",
-//         body: formData,
-//       });
-
-//       const data = await res.json();
-//       console.log("Server response:", data);
-
-//       // Reset form & fetch updated list
 //       setForm({
 //         title: "",
 //         description: "",
@@ -422,118 +253,113 @@ export default Material;
 //         tags: "",
 //         submittedBy: ""
 //       });
-//       setImageFile(null);
+//       setSelectedImage(null);
+//       setShowForm(false);
+//       setNotification(true);
 //       fetchMaterials();
+//       setTimeout(() => setNotification(false), 3000);
 //     } catch (err) {
-//       console.error("Error submitting material:", err);
+//       console.error("Failed to submit material:", err);
 //     }
+//   };
+
+//   const addToCart = (material) => {
+//     setCart(prev => {
+//       const exist = prev.find(item => item._id === material._id);
+//       if (exist) return prev;
+//       return [...prev, material];
+//     });
+//     setSideCartOpen(true);
+//   };
+
+//   const removeFromCart = (id) => {
+//     setCart(prev => prev.filter(item => item._id !== id));
 //   };
 
 //   return (
 //     <div className="material-page">
-//       {/* Material Form */}
-//       <div className="form-section">
-//         <h3>➕ Add Material</h3>
-//         <form onSubmit={handleSubmit}>
-//           <input
-//             name="title"
-//             placeholder="Title"
-//             value={form.title}
-//             onChange={handleChange}
-//             required
-//           />
+//       <button className="add-material-btn" onClick={() => setShowForm(true)}>➕ Add Material</button>
 
-//           <textarea
-//             name="description"
-//             placeholder="Description"
-//             value={form.description}
-//             onChange={handleChange}
-//             required
-//           />
+//       {notification && <div className="notification">Material added successfully!</div>}
 
-//           <input
-//             name="price"
-//             type="number"
-//             placeholder="Price (₹)"
-//             value={form.price}
-//             onChange={handleChange}
-//             required
-//           />
+//       {showForm && (
+//         <div className="form-card">
+//           <form onSubmit={handleSubmit}>
+//             <input name="title" placeholder="Title" value={form.title} onChange={handleChange} required />
+//             <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
+//             <input name="price" type="number" placeholder="Price (₹)" value={form.price} onChange={handleChange} required />
+//             <input name="quantity" type="number" placeholder="Quantity" value={form.quantity} onChange={handleChange} required />
+//             <select name="category" value={form.category} onChange={handleChange} required>
+//               <option value="">-- Select Category --</option>
+//               {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+//             </select>
+//             <input type="file" accept="image/*" onChange={e => setSelectedImage(e.target.files[0])} />
+//             <input name="tags" placeholder="Tags (comma separated)" value={form.tags} onChange={handleChange} />
+//            <input 
+//   name="submittedBy" 
+//   placeholder="Submitted By" 
+//   value={form.submittedBy} 
+//   onChange={handleChange} 
+//   list="usersList" 
+//   required 
+// />
+// <datalist id="usersList">
+//   {users.map(user => <option key={user._id} value={user.name} data-id={user._id} />)}
+// </datalist>
+//             <button type="submit">🚀 Post</button>
+//             <button type="button" onClick={() => setShowForm(false)} className="cancel-btn">Cancel</button>
+//           </form>
+//         </div>
+//       )}
 
-//           <input
-//             name="quantity"
-//             type="number"
-//             placeholder="Quantity"
-//             value={form.quantity}
-//             onChange={handleChange}
-//             required
-//           />
-
-//           <select
-//             name="category"
-//             value={form.category}
-//             onChange={handleChange}
-//             required
-//           >
-//             <option value="">-- Select Category --</option>
-//             <option value="Plastic">Plastic</option>
-//             <option value="Paper">Paper</option>
-//             <option value="Fabric">Fabric</option>
-//             <option value="Metal">Metal</option>
-//             <option value="Glass">Glass</option>
-//             <option value="Cardboard">Cardboard</option>
-//             <option value="Other">Other</option>
-//           </select>
-
-//           <input
-//             type="file"
-//             accept="image/*"
-//             onChange={(e) => setImageFile(e.target.files[0])}
-//           />
-
-//           <input
-//             name="tags"
-//             placeholder="Tags (comma separated)"
-//             value={form.tags}
-//             onChange={handleChange}
-//           />
-
-//           <input
-//             name="submittedBy"
-//             placeholder="Submitted By"
-//             value={form.submittedBy}
-//             onChange={handleChange}
-//             required
-//           />
-
-//           <button type="submit" className="post-btn">🚀 Post</button>
-//         </form>
-//       </div>
-
-//       {/* Material List */}
-//       <div className="materials-section">
-//         <h3>📋 All Materials</h3>
-//         <div className="materials-list">
-//           {materials.map((mat) => (
-//             <div key={mat._id} className="material-card">
-//               {mat.images?.[0] && (
-//                 <img
-//                   src={`https://trashtotrashur-backend.onrender.com/${mat.images[0]}`}
-//                   alt={mat.title}
-//                 />
+//       <div className="materials-grid">
+//         {materials.map(mat => (
+//           <div key={mat._id} className="material-card">
+//             <div className="img-wrap">
+//               {mat.images?.[0] ? (
+//                 <img src={`http://localhost:3000${mat.images[0]}`} alt={mat.title} />
+//               ) : (
+//                 <div className="image-placeholder">No Image</div>
 //               )}
+//               <span className="price-tag">₹{mat.price || 0}</span>
+//             </div>
+//             <div className="card-info">
 //               <h4>{mat.title}</h4>
 //               <p>{mat.description}</p>
-//               <small>📂 {mat.category}</small>
-//               <div className={`status ${mat.status}`}>
-//                 {mat.status === "approved" ? "✅ Approved" : "⏳ Pending"}
-//               </div>
+//               <small className="category">{mat.category}</small>
 //             </div>
+//             <button className="add-cart-btn" onClick={() => addToCart(mat)}>🛒 Add</button>
+//           </div>
+//         ))}
+//       </div>
+
+//       <button className="floating-cart-btn" onClick={() => setSideCartOpen(prev => !prev)}>🛒<span className="cart-count">{cart.length}</span></button>
+
+//       <div className={`side-cart ${sideCartOpen ? "open" : ""}`}>
+//         <h3>Cart</h3>
+//         <ul>
+//           {cart.map(item => (
+//             <li key={item._id}>
+//               {item.title} - ₹{item.price || 0}
+//               <button onClick={() => removeFromCart(item._id)}>Remove</button>
+//             </li>
 //           ))}
-//         </div>
+//         </ul>
 //       </div>
 //     </div>
 //   );
 // }
 
 // export default Material;
+
+
+
+
+
+
+
+
+
+
+
+

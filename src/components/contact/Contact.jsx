@@ -1,13 +1,12 @@
 import React from "react";
 import Header from "../Header";
-import "./Contact.css"; // we'll write CSS separately
+import "./Contact.css";
 
 function Contact() {
   return (
     <>
       <Header />
 
-      {/* Banner Image */}
       <div className="contact-banner">
         <img
           src="/images/conatctpage.jpg"
@@ -16,9 +15,8 @@ function Contact() {
         />
       </div>
 
-      {/* Contact Section */}
       <div className="contact-container">
-        {/* Contact Info */}
+  
         <div className="contact-info">
           <h2>Contact Info</h2>
           <div className="info-item">
@@ -35,7 +33,7 @@ function Contact() {
           </div>
         </div>
 
-        {/* Contact Form */}
+  
         <div className="contact-form-container">
           <h2>Get In Touch With Us</h2>
           <p className="subtext">

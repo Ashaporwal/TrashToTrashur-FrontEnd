@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000";
+export const BASE_URL = "http://localhost:3000";
 // const BASE_URL = "https://your-backend-render-url.onrender.com";
 
 export default {
@@ -10,4 +10,6 @@ export default {
   //  UPLOAD_FILE: "http://localhost:3000/api/uploadFile"
     // UPLOAD_FILE: `${BASE_URL}/user/uploadFile`
   UPLOAD_FILE: `${BASE_URL}/user/uploadFile`, 
+  UPLOAD_GALLERY: `${BASE_URL}/gallery/create`,
+GET_GALLERY: `${BASE_URL}/gallery`,
 };

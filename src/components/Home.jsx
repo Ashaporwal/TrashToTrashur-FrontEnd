@@ -11,7 +11,7 @@ function Home(){
 
     <Header/>
     <Hero/>
-   
+   <Footer/>
     </>
 }
 

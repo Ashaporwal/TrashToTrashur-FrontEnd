@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,6 +8,7 @@ import "./SignIn.css";
 
 function SignIn() {
   const navigate = useNavigate();
+  const location = useLocation(); // for redirect back
   const [state, setState] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -20,8 +21,11 @@ function SignIn() {
         sessionStorage.setItem("token", JSON.stringify(response.data.token));
         sessionStorage.setItem("current-user", JSON.stringify(user));
         toast.success("Logged in successfully!");
-        if(user.role==="buyer") setTimeout(()=>navigate("/home"),1000);
-        else setTimeout(()=>navigate("/product"),1000);
+
+        // Redirect back to the page user came from or default
+        const redirectTo = location.state?.from || (user.role==="buyer" ? "/home" : "/product");
+        setTimeout(() => navigate(redirectTo), 1000);
+
       } else {
         toast.error("Please enter valid email and password");
       }
@@ -34,20 +38,10 @@ function SignIn() {
     <>
       <ToastContainer />
       <div className="signin-container">
-        {/* Left Illustration */}
         <div className="signin-left">
-    {/* <img 
-  src="/images/login.png" 
-  alt="Treasure Illustration" 
-  style={{ width: "400px", height: "400px" }}  */}
-  <img 
-  src="/images/login.png" 
-  alt="Treasure Illustration" 
-  className="login-image"
-/>
+          <img src="/images/login.png" alt="Treasure Illustration" className="login-image"/>
         </div>
 
-        {/* Right Form */}
         <div className="signin-right">
           <form className="signin-form" onSubmit={handleSubmit}>
             <h2>Login</h2>
@@ -72,7 +66,7 @@ function SignIn() {
                 required
               />
               <span className="input-icon" onClick={()=>setShowPassword(!showPassword)}>
-                {showPassword ? "🙈" : "👁️"}
+                {showPassword ? "" : "👁️"}
               </span>
             </div>
 
@@ -96,3 +90,4 @@ function SignIn() {
 }
 
 export default SignIn;
+

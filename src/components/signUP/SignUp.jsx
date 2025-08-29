@@ -43,7 +43,7 @@ function SignUp() {
       toast.success("Your account has been created!");
       setTimeout(() => navigate("/signIn"), 2000);
 
-      // Reset form
+
       setFormData({
         name: "",
         email: "",
@@ -65,16 +65,15 @@ function SignUp() {
       <ToastContainer />
       <div className="signup-container">
 
-        {/* Left Illustration */}
         <div className="signup-left">
         <img 
   src="/images/login.png" 
-  alt="Treasure Illustration" 
+  alt="Treasure" 
   className="login-image"
 />
         </div>
 
-        {/* Right Form */}
+
         <div className="signup-right">
           <form className="signup-form" onSubmit={handleSubmit}>
             
@@ -96,7 +95,7 @@ function SignUp() {
               </button>
             </div>
 
-            {/* Input Fields */}
+     
             <input
               type="text"
               name="name"

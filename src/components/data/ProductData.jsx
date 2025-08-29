@@ -7,7 +7,7 @@ const productData = [
     description: "Made from old jeans and eco-friendly fabrics.",
     price: 349,
     category: "Bags & Accessories",
-    image: "/images/4.jpeg"
+    image: "/images/13.jpeg"
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ const productData = [
     description: "Sturdy backpack crafted from discarded canvas tents.",
     price: 799,
     category: "Bags & Accessories",
-    image: "/images/backpack1.jpg"
+    image: "/images/5.jpg"
   },
   {
     id: 3,
@@ -23,7 +23,7 @@ const productData = [
     description: "Trendy sling bag from recycled polyester.",
     price: 499,
     category: "Bags & Accessories",
-    image: "/images/sling1.jpg"
+    image: "/images/6.jpg"
   },
   {
     id: 4,
@@ -31,7 +31,7 @@ const productData = [
     description: "Handmade bag using fabric scraps.",
     price: 599,
     category: "Bags & Accessories",
-    image: "/images/handbag1.jpg"
+    image: "/images/CD.jpg"
   },
   {
     id: 5,
@@ -39,7 +39,7 @@ const productData = [
     description: "Compact wallet made from tire tubes.",
     price: 299,
     category: "Bags & Accessories",
-    image: "/images/wallet1.jpg"
+    image: "/images/11.jpg"
   },
   {
     id: 6,
@@ -47,7 +47,7 @@ const productData = [
     description: "Keychain crafted using colorful bottle caps.",
     price: 99,
     category: "Bags & Accessories",
-    image: "/images/keychain1.jpg"
+    image: "/images/A.jpg"
   },
   {
     id: 7,
@@ -55,7 +55,7 @@ const productData = [
     description: "Protective case made from upcycled denim.",
     price: 249,
     category: "Bags & Accessories",
-    image: "/images/case1.jpg"
+    image: "/images/34.jpg"
   },
   {
     id: 8,
@@ -63,7 +63,7 @@ const productData = [
     description: "Fashionable belt using old saree material.",
     price: 199,
     category: "Bags & Accessories",
-    image: "/images/belt1.jpg"
+    image: "/images/S.jpg"
   },
   {
     id: 9,
@@ -71,7 +71,7 @@ const productData = [
     description: "Mini purse made from natural cork waste.",
     price: 349,
     category: "Bags & Accessories",
-    image: "/images/purse1.jpg"
+    image: "/images/papercraft.jpg"
   },
   {
     id: 10,
@@ -79,10 +79,10 @@ const productData = [
     description: "Trendy cap crafted from old jeans.",
     price: 299,
     category: "Bags & Accessories",
-    image: "/images/cap1.jpg"
+    image: "/image/Tulsi.jpg"
   },
 
-  // 🏠 Home Decor
+
   {
     id: 11,
     title: "Glass Bottle Lamp",
@@ -164,7 +164,7 @@ const productData = [
     image: "/images/frame1.jpg"
   },
 
-  // ✏️ Stationery & Art
+
   {
     id: 21,
     title: "Recycled Paper Notebook",
