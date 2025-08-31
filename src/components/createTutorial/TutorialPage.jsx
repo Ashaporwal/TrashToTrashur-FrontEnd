@@ -23,7 +23,7 @@ function TutorialPage() {
 
   const fetchTutorials = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/tutorial/all");
+      const res = await axios.get("http://localhost:5000/tutorial/all");
       setTutorials(res.data);
     } catch (err) {
       console.log("Fetch tutorials failed:", err);
@@ -57,7 +57,7 @@ function TutorialPage() {
     data.append("uploadedBy", currentUserId);
 
     try {
-      await axios.post("http://localhost:3000/tutorial/create", data, {
+      await axios.post("http://localhost:5000/tutorial/create", data, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       setFormData({ title: "", description: "", video: null, images: [] });
@@ -112,7 +112,7 @@ function TutorialPage() {
               {t.video && (
                 <video
                   className="tutorial-video"
-                  src={`http://localhost:3000/uploads/${t.video?.filename || t.video}`}
+                  src={`http://localhost:5000/uploads/${t.video?.filename || t.video}`}
                   controls
                 />
               )}
@@ -121,7 +121,7 @@ function TutorialPage() {
                   {t.images.map((img, i) => (
                     <img
                       key={i}
-                      src={`http://localhost:3000/uploads/${img.filename || img}`}
+                      src={`http://localhost:5000/uploads/${img.filename || img}`}
                       alt="Tutorial"
                     />
                   ))}

@@ -24,7 +24,7 @@ function Material() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch("http://localhost:3000/material/getall");
+      const res = await fetch("http://localhost:5000/material/getall");
       const data = await res.json();
       setMaterials(data.allmaterial || []);
     } catch (err) {
@@ -34,7 +34,7 @@ function Material() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("http://localhost:3000/user/getall");
+      const res = await fetch("http://localhost:5000/user/getall");
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : data.allUsers || []);
     } catch (err) {
@@ -59,7 +59,7 @@ function Material() {
     if (selectedImage) formData.append("image", selectedImage);
 
     try {
-      await fetch("http://localhost:3000/material/create", {
+      await fetch("http://localhost:5000/material/create", {
         method: "POST",
         body: formData
       });
@@ -138,7 +138,7 @@ function Material() {
           <div key={mat._id} className="material-card">
             <div className="img-wrap">
               {mat.images?.[0] ? (
-                <img src={`http://localhost:3000${mat.images[0]}`} alt={mat.title} />
+                <img src={`http://localhost:5000${mat.images[0]}`} alt={mat.title} />
               ) : (
                 <div className="image-placeholder">No Image</div>
               )}

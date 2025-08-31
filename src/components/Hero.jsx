@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 function Hero() {
   const [tutorials, setTutorials] = useState([]);
@@ -7,7 +10,7 @@ function Hero() {
 
   // Fetch Tutorials
   useEffect(() => {
-    fetch("http://localhost:3000/tutorial/all")
+    fetch("http://localhost:5000/tutorial/all")
       .then(res => res.json())
       .then(data => setTutorials(data))
       .catch(err => console.log("Error fetching tutorials:", err));
@@ -15,31 +18,41 @@ function Hero() {
 
   // Fetch Gallery
   useEffect(() => {
-    fetch("http://localhost:3000/gallery")
+    fetch("http://localhost:5000/gallery")
       .then(res => res.json())
       .then(data => setGallery(data))
       .catch(err => console.log("Error fetching gallery:", err));
   }, []);
 
+  // Slider settings
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 2,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    responsive: [{ breakpoint: 768, settings: { slidesToShow: 1 } }]
+  };
+
   return (
     <div>
       {/* Hero Section */}
-      <div
-        style={{
-          marginTop: 10,
-          backgroundColor: "#FFF9F0",
-          borderRadius: 15,
-          padding: "40px 20px",
-          margin: "40px auto",
-          maxWidth: 1000,
-          width: "90%",
-          minHeight: "80vh",
-          display: "flex",
-          gap: 40,
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-      >
+      <div style={{
+        marginTop: 10,
+        backgroundColor: "#FFF9F0",
+        borderRadius: 15,
+        padding: "40px 20px",
+        margin: "40px auto",
+        maxWidth: 1000,
+        width: "90%",
+        minHeight: "80vh",
+        display: "flex",
+        gap: 40,
+        alignItems: "center",
+        flexWrap: "wrap"
+      }}>
         {/* Left Text */}
         <div style={{ flex: "1 1 400px", minWidth: 300 }}>
           <h1 style={{ fontWeight: "bold", color: "#8C8C8C", fontSize: 15, fontFamily: "Poppins" }}>
@@ -52,19 +65,17 @@ function Hero() {
             We take ordinary materials and transform them into extraordinary handmade pieces.
             Every creation tells a story of care, creativity, and sustainability.
           </p>
-          <Link to="">
-            <button
-              style={{
-                backgroundColor: "#B28228",
-                color: "#fff",
-                fontSize: 20,
-                borderRadius: 7,
-                border: "none",
-                fontWeight: "bold",
-                cursor: "pointer",
-                padding: "8px 16px",
-              }}
-            >
+          <Link to="/join-crafter">
+            <button style={{
+              backgroundColor: "#B28228",
+              color: "#fff",
+              fontSize: 20,
+              borderRadius: 7,
+              border: "none",
+              fontWeight: "bold",
+              cursor: "pointer",
+              padding: "8px 16px",
+            }}>
               Become a Crafter
             </button>
           </Link>
@@ -77,12 +88,7 @@ function Hero() {
             autoPlay
             loop
             muted
-            style={{
-              width: 400,
-              height: 250,
-              borderRadius: 12,
-              objectFit: "cover",
-            }}
+            style={{ width: "100%", height: 250, borderRadius: 12, objectFit: "cover" }}
           />
         </div>
       </div>
@@ -99,163 +105,81 @@ function Hero() {
       </div>
 
       {/* Tutorials Grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: 20,
-          padding: 30,
-        }}
-      >
-        {tutorials.length > 0 ? (
-          tutorials.map(t => (
-            <div
-              key={t._id}
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                overflow: "hidden",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {t.images?.[0] && (
-                <img
-                  src={t.images[0]} // <-- remove /uploads prefix if using Cloudinary
-                  alt={t.title}
-                  style={{ width: "100%", height: 180, objectFit: "cover" }}
-                />
-              )}
-              <div style={{ padding: 15, flex: 1 }}>
-                <h3 style={{ margin: "0 0 10px", fontSize: 18 }}>{t.title.replace(/"/g, "")}</h3>
-                <p style={{ margin: "0 0 12px", fontSize: 14, color: "#666" }}>
-                  {t.description.replace(/"/g, "")}
-                </p>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <Link to={`/tutorial/${t._id}`}>
-                    <button
-                      style={{
-                        backgroundColor: "#B28228",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 4,
-                        padding: "6px 12px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Explore Tutorial
-                    </button>
-                  </Link>
-                </div>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+        gap: 20,
+        padding: 30,
+      }}>
+        {tutorials.length > 0 ? tutorials.map(t => (
+          <div key={t._id} style={{
+            background: "#fff",
+            borderRadius: 12,
+            overflow: "hidden",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            display: "flex",
+            flexDirection: "column",
+          }}>
+            <img
+              src={`/uploads/${t.images[0].filename}`}
+              alt={t.title}
+              style={{ width: "100%", height: 180, objectFit: "cover" }}
+            />
+            <div style={{ padding: 15, flex: 1 }}>
+              <h3 style={{ margin: "0 0 10px", fontSize: 18 }}>{t.title.replace(/"/g, "")}</h3>
+              <p style={{ margin: "0 0 12px", fontSize: 14, color: "#666" }}>
+                {t.description.replace(/"/g, "")}
+              </p>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Link to={`/tutorial/${t._id}`}>
+                  <button style={{
+                    backgroundColor: "#B28228",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 4,
+                    padding: "6px 12px",
+                    cursor: "pointer",
+                  }}>Explore Tutorial</button>
+                </Link>
               </div>
             </div>
-          ))
-        ) : (
-          <p>Loading tutorials...</p>
-        )}
+          </div>
+        )) : <p>Loading tutorials...</p>}
       </div>
 
-      {/* Gallery Grid */}
-      <div style={{ textAlign: "center", marginTop: 40 }}>
-        <h4 style={{ color: "#B28228" }}>Our Transformation Stories</h4>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: 20,
-            padding: 30,
-          }}
-        >
-          {gallery.length > 0 ? (
-            gallery.map(g => (
-              <div
-                key={g._id} className="gallery-card"
-                style={{
+      {/* Gallery Slider */}
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: 30 }}>
+        <h4 style={{ color: "#B28228", textAlign: "center", marginBottom: 20 }}>
+          Our Transformation Stories
+        </h4>
+        {gallery.length > 0 ? (
+          <Slider {...sliderSettings}>
+            {gallery.map(g => (
+              <div key={g._id} style={{ padding: 10 }}>
+                <div style={{
                   borderRadius: 12,
                   overflow: "hidden",
                   boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                   background: "#FFF9F0",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 5,
-                }}
-              >
-                {g.before && (
-                  <img
-                    src={g.before} // <-- use full Cloudinary URL
-                    alt="Before"
-                    style={{ width: "100%", height: 120, objectFit: "cover" }}
-                  />
-                )}
-                {g.after && (
-                  <img
-                    src={g.after} // <-- use full Cloudinary URL
-                    alt="After"
-                    style={{ width: "100%", height: 120, objectFit: "cover" }}
-                  />
-                )}
-                <p style={{ padding: 10, fontWeight: "bold", textAlign: "center" }}>
-                  {g.caption}
-                </p>
+                  textAlign: "center",
+                  padding: 10,
+                }}>
+                  {g.before && <img src={g.before} alt="Before" style={{ width: "100%", height: 200, objectFit: "cover", marginBottom: 10 }} />}
+                  {g.after && <img src={g.after} alt="After" style={{ width: "100%", height: 200, objectFit: "cover" }} />}
+                  {g.caption && <p style={{ fontWeight: "bold", marginTop: 8 }}>{g.caption}</p>}
+                </div>
               </div>
-            ))
-          ) : (
-            <p>Loading gallery...</p>
-          )}
-        </div>
-      </div>
-
-      {/* CTA Buttons */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 20,
-          marginTop: 40,
-          marginBottom: 40,
-        }}
-      >
-        <Link to="/join-crafter">
-          <button
-            style={{
-              width: 220,
-              height: 60,
-              backgroundColor: "#B28228",
-              color: "#fff",
-              fontSize: 18,
-              borderRadius: 8,
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            Join as a Crafter
-          </button>
-        </Link>
-
-        <Link to="/tutorials">
-          <button
-            style={{
-              width: 220,
-              height: 60,
-              backgroundColor: "#B28228",
-              color: "#fff",
-              fontSize: 18,
-              borderRadius: 8,
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            View Tutorials
-          </button>
-        </Link>
+            ))}
+          </Slider>
+        ) : <p style={{ textAlign: "center" }}>Loading gallery...</p>}
       </div>
     </div>
   );
 }
 
 export default Hero;
+
+
 
 
 

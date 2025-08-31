@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { Avatar } from "@mui/material";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,15 +44,17 @@ function Header() {
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         {isLoggedIn ? (
           <>
-            <Link to="/userdashboard" style={{ color: "black" }}>
+            <Link to="/user-profile" style={{ color: "black" }}>
               {user?.profilePicture ? (
-                <img
+                <Avatar
+                  alt={user.name || "User"}
                   src={user.profilePicture}
-                  alt="Profile"
-                  style={{ width: "4vw", height: "4vw", minWidth: "40px", minHeight: "40px", borderRadius: "50%", objectFit: "cover" }}
+                  sx={{ width: 40, height: 40 }}
                 />
               ) : (
-                <i className="fa-regular fa-user" style={{ fontSize: "20px" }}></i>
+                <Avatar sx={{ width: 40, height: 40 }}>
+                  {user?.name ? user.name[0].toUpperCase() : "U"}
+                </Avatar>
               )}
             </Link>
 
@@ -63,19 +66,30 @@ function Header() {
               <i className="fa-regular fa-heart" style={{ fontSize: "20px" }}></i>
             </Link>
 
-            <Link to="/cart" style={{ color: "black" }}>
-              <i className="fa-regular fa-cart-shopping" style={{ fontSize: "20px" }}></i>
-            </Link>
-
-            <button 
-              onClick={handleLogout} 
-              style={{ padding: "5px 10px", cursor: "pointer", borderRadius: "5px", border: "1px solid black", background: "white" }}
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "5px 10px",
+                cursor: "pointer",
+                borderRadius: "5px",
+                border: "1px solid black",
+                background: "white"
+              }}
             >
               Logout
             </button>
           </>
         ) : (
-          <Link to="/SignIn" style={{ padding: "5px 10px", border: "1px solid black", borderRadius: "5px", textDecoration: "none", color: "black" }}>
+          <Link
+            to="/signIn"
+            style={{
+              padding: "5px 10px",
+              border: "1px solid black",
+              borderRadius: "5px",
+              textDecoration: "none",
+              color: "black"
+            }}
+          >
             Login
           </Link>
         )}
@@ -85,6 +99,7 @@ function Header() {
 }
 
 export default Header;
+
 
 
 
