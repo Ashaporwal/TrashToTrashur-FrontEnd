@@ -1,65 +1,37 @@
-
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./ProductCard.css";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onAddToCart }) => {
   const navigate = useNavigate();
 
-  // Agar product data nahi hai to kuch mat dikhana
   if (!product) return null;
 
-  // Product ke fields destructure karo, default values ke saath
-  const {
-    _id,
-    name = "Untitled Product",
-    price = 0,
-    images = [],
-    description = "No description available",
-    stock = 0,
-    discount = 0,
-  } = product;
+  const { _id, title, price = 0, images = [], description, stock = 0, discount = 0 } = product;
+  const firstImage = images.length > 0 ? images[0] : null;
 
-  // Pehla image dikhayenge, warna placeholder
-  const imageUrl = images.length > 0 ? images[0] : null;
-
-  // Card click pe Product Detail Page pe le jao
-  const handleCardClick = () => {
+  const openProductDetails = () => {
     navigate(`/product/${_id}`);
   };
 
   return (
-    <div
-      className="product-card"
-      onClick={handleCardClick}
-      style={{ cursor: "pointer" }}
-    >
-      {/* Product Image Section */}
-      <div className="product-image-wrapper">
-        {imageUrl ? (
-          <img src={imageUrl} alt={name} className="product-image" />
-        ) : (
-          <div className="image-placeholder">No Image</div>
-        )}
+    <div className="product-card">
+      <div className="product-image-wrapper" onClick={openProductDetails} style={{ cursor: "pointer" }}>
+        {firstImage ? <img src={firstImage} alt={title} className="product-image" /> : <div className="image-placeholder">No Image</div>}
       </div>
 
-      {/* Product Details Section */}
       <div className="product-details">
-        <h3 className="product-name">{name}</h3>
-        <p className="product-description">{description}</p>
+        <h3 className="product-name">{title || "Untitled Product"}</h3>
+        <p className="product-description">{description || "No description available"}</p>
 
         <div className="product-price-stock">
           <span className="product-price">₹{price}</span>
           {discount > 0 && <span className="product-discount">{discount}% OFF</span>}
-          <span className="product-stock">
-            {stock > 0 ? "In stock" : "Out of stock"}
-          </span>
+          <span className="product-stock">{stock > 0 ? "In stock" : "Out of stock"}</span>
         </div>
 
-        {/* Action Buttons */}
         <div className="product-buttons">
-          <button className="add-to-cart-btn" disabled={stock === 0}>
+          <button className="add-to-cart-btn" onClick={() => stock > 0 && onAddToCart(product)} disabled={stock === 0}>
             Add to Cart
           </button>
           <button className="buy-now-btn" disabled={stock === 0}>
@@ -72,6 +44,8 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
+
+
 
 
 

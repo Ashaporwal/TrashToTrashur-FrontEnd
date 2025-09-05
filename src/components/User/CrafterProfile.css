@@ -1,0 +1,137 @@
+/* body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #fff9f0;
+  margin: 0;
+  padding: 0;
+  color: #3a3a3a;
+} */
+
+.profile-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 15px;
+}
+
+.profile-card {
+  display: flex;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, #fff9f0, #b28228);
+  padding: 25px;
+  border-radius: 15px;
+  gap: 20px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+.photo-section {
+  flex: 1 1 200px;
+  text-align: center;
+}
+
+.profile-photo {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #b28228;
+}
+
+.file-input {
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.info-section {
+  flex: 2 1 400px;
+}
+
+.info-row {
+  margin-bottom: 14px;
+}
+
+.info-row label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.info-row input,
+.info-row textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #b28228;
+  font-size: 1rem;
+}
+
+.info-row textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.profile-buttons {
+  margin-top: 18px;
+}
+
+.btn-edit,
+.btn-save,
+.btn-cancel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-edit {
+  background-color: #b28228;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #9c6e1e;
+}
+
+.btn-save {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #388e3c;
+}
+
+.btn-cancel {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #d32f2f;
+}
+
+.tutorials-section {
+  margin-top: 30px;
+}
+
+.tutorials-section h2 {
+  margin-bottom: 15px;
+  font-size: 1.6rem;
+  color: #4a2c0f;
+}
+
+.tutorial-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.tutorial-card {
+  background: #fff3e0;
+  padding: 15px;
+  border-radius: 10px;
+  flex: 1 1 250px;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+}

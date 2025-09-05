@@ -1,19 +1,28 @@
+/* =======================
+   Container & Layout
+======================= */
 .product-page-container {
   display: grid;
-  grid-template-columns: 0.25fr 1fr; /* Sidebar 25%, products 75% */
-  gap: 2rem;
-  padding: 2rem;
+  grid-template-columns: 0.22fr 1fr; /* Sidebar 22%, Products 78% */
+  gap: 1.2rem;
+  padding: 1.2rem;
+  background-color: #FFF9F0;
+  font-family: 'Arial', sans-serif;
 }
 
-/* Sidebar styling */
+/* =======================
+   Sidebar Styling
+======================= */
 .sidebar {
-  background: #f9f9f9;
-  padding: 1rem;
-  border-radius: 8px;
+  background: #D4B483; /* soft gold */
+  padding: 0.8rem;
+  border-radius: 10px;
+  color: #FFF9F0;
 }
 
 .sidebar h3 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
 }
 
 .sidebar ul {
@@ -22,29 +31,221 @@
 }
 
 .sidebar li {
-  margin: 0.5rem 0;
+  margin: 0.4rem 0;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.15s ease-in-out;
+  font-weight: 500;
+  padding: 0.15rem 0;
+  border-radius: 3px;
 }
 
 .sidebar li:hover {
-  color: #22cfff;
+  background: rgba(255, 249, 240, 0.15);
+  padding-left: 0.25rem;
 }
 
 .sidebar .active {
-  font-weight: bold;
-  color: #22f0ff;
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 .sidebar .reset {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #999;
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  opacity: 0.8;
 }
 
-/* Product grid styling */
+/* =======================
+   Product Grid Styling
+======================= */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr); /* max 3 cards per row */
+  gap: 1.2rem;
+}
+
+/* =======================
+   Product Card Styling
+======================= */
+.product-card {
+  background: #FFF9F0;
+  border-radius: 8px;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(178, 130, 40, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(178, 130, 40, 0.15);
+}
+
+/* =======================
+   Product Image
+======================= */
+.product-image-wrapper {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 6px;
+  margin-bottom: 0.6rem;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 0.8rem;
+  border-radius: 6px;
+}
+
+/* =======================
+   Product Details
+======================= */
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.product-name {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #B28228;
+}
+
+.product-description {
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.1rem;
+}
+
+.product-price-stock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.3rem;
+}
+
+.product-price {
+  font-weight: 600;
+  color: #B28228;
+}
+
+.product-stock {
+  font-size: 0.72rem;
+  color: #777;
+}
+
+/* =======================
+   Action Buttons
+======================= */
+.product-buttons {
+  display: flex;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.add-to-cart-btn,
+.buy-now-btn {
+  flex: 1;
+  padding: 0.3rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.add-to-cart-btn {
+  background-color: #B28228;
+  color: #FFF9F0;
+}
+
+.add-to-cart-btn:hover {
+  opacity: 0.85;
+}
+
+.buy-now-btn {
+  background-color: #FFF9F0;
+  color: #B28228;
+  border: 1px solid #B28228;
+}
+
+.buy-now-btn:hover {
+  background-color: #B28228;
+  color: #FFF9F0;
+}
+
+/* =======================
+   Responsive
+======================= */
+@media screen and (max-width: 768px) {
+  .product-page-container {
+    grid-template-columns: 1fr;
+    padding: 0.8rem;
+  }
+
+  .sidebar {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.6rem;
+    padding: 0.4rem;
+  }
+
+  .sidebar ul {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: 1fr; /* 1 card per row on phones */
+  }
+}
+
+/* =======================
+   Search Bar
+======================= */
+.search-bar {
+  margin-bottom: 1.2rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem 0.8rem;
+  border-radius: 25px;
+  border: 1px solid #B28228;
+  outline: none;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.search-bar input:focus {
+  box-shadow: 0 0 5px rgba(178, 130, 40, 0.5);
+  border-color: #B28228;
 }

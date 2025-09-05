@@ -8,68 +8,114 @@ import "./SignIn.css";
 
 function SignIn() {
   const navigate = useNavigate();
-  const location = useLocation(); // for redirect back
+  const location = useLocation();
   const [state, setState] = useState({ email: "", password: "" });
+  const [role, setRole] = useState("crafter"); // default role is crafter
   const [showPassword, setShowPassword] = useState(false);
 
+  // Change role tab
+  const handleRoleChange = (newRole) => {
+    setRole(newRole);
+  };
+
+  // Submit login form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if(state.email && state.password){
-        const response = await axios.post(EndPoint.SIGN_IN, state);
-        const user = response.data.user;
-        sessionStorage.setItem("token", JSON.stringify(response.data.token));
-        sessionStorage.setItem("current-user", JSON.stringify(user));
-        toast.success("Logged in successfully!");
-
-        // Redirect back to the page user came from or default
-        const redirectTo = location.state?.from || (user.role==="buyer" ? "/home" : "/product");
-        setTimeout(() => navigate(redirectTo), 1000);
-
-      } else {
+      if (!state.email || !state.password) {
         toast.error("Please enter valid email and password");
+        return;
       }
-    } catch(err){
+
+      const response = await axios.post(
+        EndPoint.SIGN_IN,
+        { ...state, role },
+        { withCredentials: true }
+      );
+
+      const user = response.data.user;
+
+      // Check if selected role matches the one from backend
+      if (user.role !== role) {
+        toast.error(`You are a ${user.role}. Please login with correct role.`);
+        return;
+      }
+
+      // Save token and user info in sessionStorage
+      sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("current-user", JSON.stringify(user));
+      sessionStorage.setItem("role", user.role);
+      sessionStorage.setItem("userId", user._id);
+
+      sessionStorage.getItem("userId");
+
+      toast.success("Logged in successfully!");
+
+      // Redirect based on role
+      const redirectTo = location.state?.from || (user.role === "buyer" ? "/home" : "/product");
+      setTimeout(() => navigate(redirectTo), 1000);
+
+    } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
     }
-  }
+  };
 
   return (
     <>
       <ToastContainer />
-      <div className="signin-container">
-        <div className="signin-left">
-          <img src="/images/login.png" alt="Treasure Illustration" className="login-image"/>
-        </div>
-
+      <div className="signin-container signin-center">
         <div className="signin-right">
           <form className="signin-form" onSubmit={handleSubmit}>
             <h2>Login</h2>
 
+            {/* Role Tabs */}
+            <div className="role-tabs">
+              <button
+                type="button"
+                className={role === "crafter" ? "active" : ""}
+                onClick={() => handleRoleChange("crafter")}
+              >
+                Crafter
+              </button>
+              <button
+                type="button"
+                className={role === "buyer" ? "active" : ""}
+                onClick={() => handleRoleChange("buyer")}
+              >
+                Buyer
+              </button>
+            </div>
+
+            {/* Email */}
             <div className="input-field">
               <input
                 type="email"
                 placeholder="Email"
                 value={state.email}
-                onChange={e=>setState({...state,email:e.target.value})}
+                onChange={(e) => setState({ ...state, email: e.target.value })}
                 required
               />
               <span className="input-icon">📧</span>
             </div>
 
+            {/* Password */}
             <div className="input-field">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={state.password}
-                onChange={e=>setState({...state,password:e.target.value})}
+                onChange={(e) => setState({ ...state, password: e.target.value })}
                 required
               />
-              <span className="input-icon" onClick={()=>setShowPassword(!showPassword)}>
-                {showPassword ? "" : "👁️"}
+              <span
+                className="input-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
               </span>
             </div>
 
+            {/* Submit */}
             <button type="submit" className="login-btn">Log In</button>
 
             <p className="or-text">Or Continue With</p>

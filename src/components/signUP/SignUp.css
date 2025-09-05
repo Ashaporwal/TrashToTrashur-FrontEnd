@@ -1,26 +1,19 @@
-/* body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #7feb14, #e2e2e4, #bd284b);
-  background-size: 600% 600%;
-  animation: gradientShift 15s ease infinite;
-} */
-
-/* @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-} */
+/* ===============================
+   Signup Page Container
+=============================== */
 .signup-container {
   display: flex;
   height: 100vh;
   font-family: 'Poppins', sans-serif;
+  background-color: #FFF9F0; /* soft cream background */
 }
 
-/* Left side illustration */
+/* ===============================
+   Left Illustration
+=============================== */
 .signup-left {
   flex: 1;
-  background-color: #FADCD9;
+  background-color: #FFF9F0; /* soft cream */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -33,27 +26,40 @@
   width: 70%;
   max-width: 400px;
   object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-/* Right side form */
+.signup-left img:hover {
+  transform: scale(1.05);
+}
+
+/* ===============================
+   Right Form Area
+=============================== */
 .signup-right {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
+  background-color: #ffffff;
 }
 
 .signup-form {
   width: 100%;
-  max-width: 380px;
-  background-color: #fff;
+  max-width: 400px;
+  background-color: #ffffff;
   padding: 40px 30px;
   border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.signup-form:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
 .signup-form h2 {
@@ -63,26 +69,33 @@
   font-weight: 700;
 }
 
+/* ===============================
+   Inputs
+=============================== */
 .signup-form input {
   width: 100%;
-  padding: 14px 15px;
+  padding: 14px 18px;
   margin-bottom: 20px;
   border-radius: 12px;
   border: 1px solid #ddd;
   font-size: 16px;
+  transition: all 0.3s ease;
 }
 
 .signup-form input:focus {
   outline: none;
-  border-color: #FF6B6B;
-  box-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+  border-color: #B28228; /* gold focus */
+  box-shadow: 0 0 8px rgba(178, 130, 40, 0.4);
 }
 
+/* ===============================
+   Buttons
+=============================== */
 .signup-form button {
   padding: 14px;
   border-radius: 12px;
   border: none;
-  background-color: #FF6B6B;
+  background-color: #B28228; /* gold button */
   color: #fff;
   font-size: 18px;
   font-weight: 600;
@@ -91,11 +104,13 @@
 }
 
 .signup-form button:hover {
-  background-color: #ff5252;
+  background-color: #9c6f22; /* slightly darker gold */
   transform: translateY(-2px);
 }
 
-/* Role tabs */
+/* ===============================
+   Role Tabs
+=============================== */
 .role-tabs {
   display: flex;
   justify-content: center;
@@ -115,24 +130,33 @@
 }
 
 .role-tabs button.active {
-  background-color: #FF6B6B;
+  background-color: #B28228;
   color: #fff;
-  border-color: #FF6B6B;
+  border-color: #B28228;
 }
 
-/* Sign in link */
+/* ===============================
+   Sign in Link
+=============================== */
 .login-link {
   margin-top: 15px;
   font-size: 14px;
 }
 
 .login-link a {
-  color: #FF6B6B;
+  color: #B28228;
   font-weight: 600;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-/* Responsive */
+.login-link a:hover {
+  color: #9c6f22;
+}
+
+/* ===============================
+   Responsive
+=============================== */
 @media (max-width: 768px) {
   .signup-container {
     flex-direction: column;

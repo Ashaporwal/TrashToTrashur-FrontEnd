@@ -9,7 +9,7 @@ function Contact() {
 
       <div className="contact-banner">
         <img
-          src="/images/conatctpage.jpg"
+          src="/icon/conatctpage.jpg"
           alt="Contact Banner"
           className="banner-img"
         />

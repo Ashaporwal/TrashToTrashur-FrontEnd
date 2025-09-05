@@ -5,7 +5,7 @@ import { Avatar } from "@mui/material";
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-
+const role = sessionStorage.getItem("role");
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     const userInfo = sessionStorage.getItem("current-user");
@@ -32,19 +32,31 @@ function Header() {
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 20px" }}>
 
       {/* Centered Links */}
-      <div style={{ display: "flex", justifyContent: "center", flex: 1 }}>
-        <Link to="/home" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Home</Link>
-        <Link to="/product" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Product</Link>
-        <Link to="/material" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Materials</Link>
-        <Link to="/contact" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Contact</Link>
-        <Link to="/tutorial" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Tutorial</Link>
-      </div>
+    <div style={{ display: "flex", justifyContent: "center", flex: 1 }}>
+  <Link to="/home" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Home</Link>
+  <Link to="/product" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Product</Link>
+  {/* <Link to="/material-crafter" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Materials</Link> */}
+  <Link
+  to={role === "crafter" ? "/material-crafter" : "/material-buyer"}
+  style={{ margin: "0 15px", textDecoration: "none", color: "black" }}
+>
+  Materials
+</Link>
+  <Link to="/contact" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Contact</Link>
+  {/* <Link to="/crafterprofiel" style={{margin:"0 15px",textDecoration:"none", color:"black"}}></Link> */}
 
-      {/* Right Side: Icons + Login/Logout */}
+  {/* Tutorial link text changes based on role */}
+  {isLoggedIn && user && (
+    <Link to="/tutorial" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>
+      {/* {user.role === "buyer" ? "View Tutorials" : "Tutorial"} */}
+      {user.role === "buyer" ? "Browse Tutorials" : "Tutorial"}
+    </Link>
+  )}
+</div>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         {isLoggedIn ? (
           <>
-            <Link to="/user-profile" style={{ color: "black" }}>
+            {/* <Link to="/crafter-profile" style={{ color: "black" }}>
               {user?.profilePicture ? (
                 <Avatar
                   alt={user.name || "User"}
@@ -56,16 +68,28 @@ function Header() {
                   {user?.name ? user.name[0].toUpperCase() : "U"}
                 </Avatar>
               )}
-            </Link>
-
+            </Link> */}
+{/* 
             <Link to="/search" style={{ color: "black" }}>
               <i className="fa-solid fa-magnifying-glass" style={{ fontSize: "20px" }}></i>
-            </Link>
+            </Link> */}
 
             <Link to="/likes" style={{ color: "black" }}>
               <i className="fa-regular fa-heart" style={{ fontSize: "20px" }}></i>
             </Link>
+<Link
+  to={role === "crafter" ? "/crafter-profile" : "/buyer-profile"}
+  style={{ color: "black" }}
+>
+  <i className="fa-regular fa-user" style={{ fontSize: "20px" }}></i>
+</Link>
 
+
+
+
+{/* <Link to="/crafter-profile" style={{color:"black"}}>
+<i className="fa-regular fa-user" style={{fontSize:"20px"}}></i>
+</Link> */}
             <button
               onClick={handleLogout}
               style={{
