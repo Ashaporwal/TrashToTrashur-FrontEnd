@@ -13,12 +13,11 @@ function SignIn() {
   const [role, setRole] = useState("crafter"); // default role is crafter
   const [showPassword, setShowPassword] = useState(false);
 
-  // Change role tab
+
   const handleRoleChange = (newRole) => {
     setRole(newRole);
   };
 
-  // Submit login form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -35,13 +34,12 @@ function SignIn() {
 
       const user = response.data.user;
 
-      // Check if selected role matches the one from backend
+
       if (user.role !== role) {
         toast.error(`You are a ${user.role}. Please login with correct role.`);
         return;
       }
 
-      // Save token and user info in sessionStorage
       sessionStorage.setItem("token", response.data.token);
       sessionStorage.setItem("current-user", JSON.stringify(user));
       sessionStorage.setItem("role", user.role);
@@ -49,6 +47,7 @@ function SignIn() {
 
       sessionStorage.getItem("userId");
 
+      console.log(user._id);
       toast.success("Logged in successfully!");
 
       // Redirect based on role

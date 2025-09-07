@@ -1,10 +1,13 @@
 
+
 import React, { useEffect, useState } from "react";
 import "./CrafterMaterial.css";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "../Header";
 import OrderNowModel from "../Order/OrderNowModel";
+import { useNavigate } from "react-router-dom"; 
+import OrderHistory from "../Order/OrderHistory";
 
 function CrafterMaterialPage() {
   const [materials, setMaterials] = useState([]);
@@ -12,6 +15,7 @@ function CrafterMaterialPage() {
   const [checkoutItem, setCheckoutItem] = useState(null);
 
   const currentUserId = sessionStorage.getItem("userId");
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     fetchMaterials();
@@ -41,7 +45,8 @@ function CrafterMaterialPage() {
 
   const handleBuyNow = (material) => {
     if (!material || !material._id) return;
-    setCheckoutItem(material); // Ye sirf trigger hai, actual order modal alag se banega
+    setCheckoutItem(material); 
+    console.log("Buy Now clicked:", material);
   };
 
   return (
@@ -50,6 +55,7 @@ function CrafterMaterialPage() {
       <div className="material-page">
         <Header />
 
+        {/* Cart Icon */}
         <div
           className="cart-icon"
           onClick={() => {
@@ -57,6 +63,16 @@ function CrafterMaterialPage() {
           }}
         >
           🛒 <span>{cart.length}</span>
+        </div>
+
+        {/* 👇 My Orders button */}
+        <div style={{ textAlign: "right", margin: "10px 0" }}>
+          <button 
+            onClick={() => navigate("/my-orders")} 
+            className="my-orders-btn"
+          >
+            📦 My Orders
+          </button>
         </div>
 
         <h2>Available Materials</h2>
@@ -75,9 +91,17 @@ function CrafterMaterialPage() {
                 <div className="card-info">
                   <h4>{mat.title}</h4>
                   <p>{mat.description}</p>
-                  <small className="category">{mat.category}</small>
+                  <small className="category">Category: {mat.category}</small>
+
                   <p>Price: ₹{mat.price}</p>
+                  {mat.discount && <p className="discount">Discount: {mat.discount}% OFF</p>}
+
                   <p>Available Stock: {mat.quantity}</p>
+
+                  {mat.sellerName && <p>👤 Seller: {mat.sellerName}</p>}
+                  {mat.rating && <p>⭐ {mat.rating}/5</p>}
+                  {mat.deliveryTime && <p>🚚 Delivery in: {mat.deliveryTime} days</p>}
+                  {mat.location && <p>📍 Location: {mat.location}</p>}
                 </div>
                 <div className="card-buttons">
                   <button onClick={() => addToCart(mat)} className="add-to-cart-btn">
@@ -91,11 +115,18 @@ function CrafterMaterialPage() {
             ) : null
           )}
         </div>
-          {checkoutItem && (
+
+        {/* Buy Now Modal */}
+        {checkoutItem && (
           <OrderNowModel
-            material={checkoutItem}
-            onClose={() => setCheckoutItem(null)} // close button handle
-          />
+  material={checkoutItem}
+  onClose={() => setCheckoutItem(null)}
+  onOrderPlaced={() => {
+    setCheckoutItem(null); // close modal after order
+    fetchMaterials();       // refresh materials or orders if needed
+    toast.success("Order placed successfully!"); // optional feedback
+  }}
+/>
         )}
       </div>
     </>
@@ -104,6 +135,130 @@ function CrafterMaterialPage() {
 
 export default CrafterMaterialPage;
 
+
+// import React, { useEffect, useState } from "react";
+// import "./CrafterMaterial.css";
+// import axios from "axios";
+// import { toast, ToastContainer } from "react-toastify";
+// import Header from "../Header";
+// import OrderNowModel from "../Order/OrderNowModel";
+// import { useNavigate } from "react-router-dom"; 
+// import OrderHistory from "../Order/OrderHistory";
+
+// function CrafterMaterialPage() {
+//   const [materials, setMaterials] = useState([]);
+//   const [cart, setCart] = useState([]);
+//   const [checkoutItem, setCheckoutItem] = useState(null);
+
+//   const currentUserId = sessionStorage.getItem("userId");
+//   const navigate = useNavigate(); 
+
+//   useEffect(() => {
+//     fetchMaterials();
+//   }, []);
+
+//   const fetchMaterials = async () => {
+//     try {
+//       const res = await axios.get("http://localhost:5000/material/all");
+//       let mats = Array.isArray(res.data.allmaterial) ? res.data.allmaterial : [];
+//       mats = mats.filter((m) => m && m._id);
+//       setMaterials(mats);
+//     } catch (err) {
+//       console.error("Failed to fetch materials:", err);
+//       setMaterials([]);
+//     }
+//   };
+
+//   const addToCart = (material) => {
+//     if (!material || !material._id) return;
+//     if (cart.some((item) => item._id === material._id)) {
+//       toast.warning("Already in cart!");
+//       return;
+//     }
+//     setCart((prev) => [...prev, material]);
+//     toast.success("Added to cart!");
+//   };
+
+//   const handleBuyNow = (material) => {
+//     if (!material || !material._id) return;
+//     setCheckoutItem(material); 
+//   };
+
+//   return (
+//     <>
+//       <ToastContainer />
+//       <div className="material-page">
+//         <Header />
+
+//         {/* Cart Icon */}
+//         <div
+//           className="cart-icon"
+//           onClick={() => {
+//             // cart icon click ke liye alag modal / page handle hoga
+//           }}
+//         >
+//           🛒 <span>{cart.length}</span>
+//         </div>
+
+//         {/* 👇 My Orders button */}
+//         <div style={{ textAlign: "right", margin: "10px 0" }}>
+//           <button 
+//             onClick={() => navigate("/my-orders")} 
+//             className="my-orders-btn"
+//           >
+//             📦 My Orders
+//             {/* <OrderHistory/> */}
+//           </button>
+//         </div>
+
+//         <h2>Available Materials</h2>
+//         <div className="materials-grid">
+//           {materials.length === 0 && <p>No materials available.</p>}
+//           {materials.map((mat) =>
+//             mat && mat._id ? (
+//               <div key={mat._id} className="material-card">
+//                 <div className="img-wrap">
+//                   {mat.images?.[0] ? (
+//                     <img src={`http://localhost:5000${mat.images[0]}`} alt={mat.title} />
+//                   ) : (
+//                     <div className="image-placeholder">No Image</div>
+//                   )}
+//                 </div>
+//                 <div className="card-info">
+//                   <h4>{mat.title}</h4>
+//                   <p>{mat.description}</p>
+//                   <small className="category">{mat.category}</small>
+//                   <p>Price: ₹{mat.price}</p>
+//                   <p>Available Stock: {mat.quantity}</p>
+//                 </div>
+//                 <div className="card-buttons">
+//                   <button onClick={() => addToCart(mat)} className="add-to-cart-btn">
+//                     🛒 Add to Cart
+//                   </button>
+//                   <button onClick={() => handleBuyNow(mat)} className="buy-now-btn">
+//                     ⚡ Buy Now
+//                   </button>
+//                 </div>
+//               </div>
+//             ) : null
+//           )}
+//         </div>
+
+//         {/* Buy Now Modal */}
+//         {checkoutItem && (
+//           <OrderNowModel
+//             material={checkoutItem}
+//             onClose={() => setCheckoutItem(null)} // close button handle
+//           />
+//         )}
+//       </div>
+//     </>
+//   );
+// }
+
+// export default CrafterMaterialPage;
+
+//7 tareek..
 
 
 // import React, { useEffect, useState } from "react";

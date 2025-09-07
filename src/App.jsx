@@ -40,6 +40,7 @@ import CrafterMaterialPage from './components/material/CrafterMaterialPage';
 import CrafterProfile from './components/User/CrafterProfile';
 // import BuyerProfile from './components/User/BuyerProfile';
 
+import MyOrdersPage from './components/Order/MyOrdersPage';
 
 // import { Avatar } from "@mui/material";
 function App() {
@@ -75,6 +76,7 @@ function App() {
            <Route path="/user-profile"element={ <Auth><UserProfile /></Auth>} />
  {/* <Route path="/user-profile"element={<UserProfile />} /> */}
           <Route path="/profile/:id" element={<UserProfile />} />
+             <Route path="/my-orders" element={<MyOrdersPage />} />
       </Routes>
     </BrowserRouter>
 

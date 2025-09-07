@@ -1,144 +1,138 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 
 const OrderNowModel = ({ material, onClose, onOrderPlaced }) => {
   const [quantity, setQuantity] = useState(1);
   const [address, setAddress] = useState("");
-  const [notes, setNotes] = useState("");
+
+  const currentUser = JSON.parse(sessionStorage.getItem("current-user"));
 
   const handlePlaceOrder = async () => {
-    if (!address.trim()) {
-      toast.error("Enter delivery address!");
-      return;
-    }
+    // const handlePlaceOrder = async () => {
+  console.log("Order payload:", {
+    buyer: currentUser._id,
+        material: material._id,
+      seller: material.submittedBy._id,
 
-    if (quantity > material.quantity) {
-      toast.error("Quantity exceeds available stock!");
+    quantity,
+    images: material.images || [],
+    totalPrice: material.price * quantity,
+    address,
+  });
+
+
+    if (!address) {
+      alert("Please enter delivery address!");
       return;
     }
 
     try {
-      const currentUser = JSON.parse(sessionStorage.getItem("current-user"));
-      await axios.post("http://localhost:5000/order/", {
-        buyer: currentUser._id,
-        materialId: material._id,
-        quantity,
-        totalPrice: quantity * material.price,
-        address,
-        notes
-      });
+      // ✅ Fixed request body: include material, seller, buyer
+const res = await axios.post("http://localhost:5000/order", {
+  materialId: material._id, // <- yahan change
+  seller: material.submittedBy._id,
+  buyer: currentUser._id,
+  quantity: Number(quantity),
+  totalPrice: Number(quantity) * Number(material.price),
+  address,
+  images: material.images || [],
+});
 
-      toast.success("Order placed successfully!");
-      onOrderPlaced?.(); // refresh orders or update cart
-      onClose();
+
+
+      
+      // alert("✅ Order placed successfully!");
+      if (onOrderPlaced) onOrderPlaced(); // check if function exists
+      onClose(); // close modal
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.error || "Failed to place order!");
+      console.error("Order placement error:", err.response || err);
+      alert("❌ Failed to place order!");
     }
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
+    <div style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+      padding: "10px",
+    }}>
+      <div style={{
+        backgroundColor: "#fff",
+        borderRadius: "12px",
         width: "100%",
-        height: "100%",
-        background: "rgba(0,0,0,0.3)",
+        maxWidth: "450px",
+        padding: "25px",
+        boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000
-      }}
-    >
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: "10px",
-          padding: "20px",
-          width: "420px",
-          maxWidth: "90%",
-          boxShadow: "0 5px 20px rgba(0,0,0,0.3)",
-          overflowY: "auto"
-        }}
-      >
-        <h3 style={{ marginBottom: "15px", textAlign: "center" }}>Order Now</h3>
+        flexDirection: "column",
+        gap: "15px",
+      }}>
+        <h2 style={{ margin: 0 }}>{material.title}</h2>
+        <p style={{ margin: "5px 0" }}>Price per unit: <strong>₹{material.price}</strong></p>
+        <p style={{ margin: "5px 0" }}>Available Stock: <strong>{material.quantity}</strong></p>
 
-        <div style={{ textAlign: "center" }}>
-          <img
-            src={material.images?.[0] ? `http://localhost:5000${material.images[0]}` : ""}
-            alt={material.title}
-            style={{ width: "200px", height: "200px", objectFit: "cover", borderRadius: "8px", marginBottom: "10px" }}
-          />
-          <h4>{material.title}</h4>
-          <p style={{ fontSize: "14px", color: "#555" }}>{material.description}</p>
-          <p style={{ fontSize: "13px", color: "#777" }}>Category: {material.category}</p>
-          <p>Price per item: ₹{material.price}</p>
-          <p>Available Stock: {material.quantity}</p>
-        </div>
+        <input
+          type="number"
+          value={quantity}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+          min={1}
+          max={material.quantity}
+          style={{
+            padding: "10px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            width: "100%",
+          }}
+        />
 
-        <div style={{ marginTop: "15px" }}>
-          <label>Quantity:</label>
-          <input
-            type="number"
-            min="1"
-            max={material.quantity}
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            style={{ width: "100%", padding: "8px", marginTop: "5px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
-          />
+        <input
+          type="text"
+          placeholder="Enter delivery address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          style={{
+            padding: "10px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            width: "100%",
+          }}
+        />
 
-          <label>Delivery Address:</label>
-          <textarea
-            placeholder="Enter your address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "5px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc", resize: "vertical" }}
-          />
-
-          <label>Additional Notes (Optional):</label>
-          <textarea
-            placeholder="Any special instructions?"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "5px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #ccc", resize: "vertical" }}
-          />
-
-          <p style={{ fontWeight: "bold", marginBottom: "15px" }}>Total Price: ₹{quantity * material.price}</p>
-
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <button
-              onClick={handlePlaceOrder}
-              style={{
-                padding: "10px 15px",
-                borderRadius: "5px",
-                backgroundColor: "#28a745",
-                color: "#fff",
-                border: "none",
-                cursor: "pointer",
-                flex: 1,
-                marginRight: "10px"
-              }}
-            >
-              Place Order
-            </button>
-            <button
-              onClick={onClose}
-              style={{
-                padding: "10px 15px",
-                borderRadius: "5px",
-                backgroundColor: "#dc3545",
-                color: "#fff",
-                border: "none",
-                cursor: "pointer",
-                flex: 1
-              }}
-            >
-              Cancel
-            </button>
-          </div>
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+          <button
+            onClick={handlePlaceOrder}
+            style={{
+              backgroundColor: "#28a745",
+              color: "#fff",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
+            Place Order
+          </button>
+          <button
+            onClick={onClose}
+            style={{
+              backgroundColor: "#dc3545",
+              color: "#fff",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -146,4 +140,9 @@ const OrderNowModel = ({ material, onClose, onOrderPlaced }) => {
 };
 
 export default OrderNowModel;
+
+
+
+
+
 
