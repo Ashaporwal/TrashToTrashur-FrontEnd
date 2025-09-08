@@ -1,49 +1,54 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from "react";
 
-// Confirmation Modal Component
 const OrderConfirmationModal = ({ order, onClose }) => {
+  if (!order) return null;
+
+  const productName = order.material?.title || "Unknown Product";
+  const price = order.totalPrice || 0;
+  const deliveryAddress = order.address || "Not Provided";
+
   return (
-    <div style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100vw",
-      height: "100vh",
-      backgroundColor: "rgba(0,0,0,0.6)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      zIndex: 1100,
-      padding: "10px",
-    }}>
-      <div style={{
-        backgroundColor: "#fff",
-        borderRadius: "12px",
-        width: "100%",
-        maxWidth: "400px",
-        padding: "20px",
-        boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0,0,0,0.6)",
         display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-      }}>
-        <h2>Order Confirmed!</h2>
-        <p><strong>Order ID:</strong> {order._id}</p>
-        <p><strong>Product:</strong> {order.material.title}</p>
-        <p><strong>Quantity:</strong> {order.quantity}</p>
-        <p><strong>Total Price:</strong> ₹{order.totalPrice}</p>
-        <p><strong>Delivery Address:</strong> {order.address}</p>
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 2000,
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          padding: "25px",
+          borderRadius: "12px",
+          minWidth: "350px",
+          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ marginBottom: "10px", color: "#28a745" }}>🎉 Congratulations!</h2>
+        <p>Your order has been placed successfully.</p>
+        <p><strong>Product:</strong> {productName}</p>
+        <p><strong>Total Price:</strong> ₹{price}</p>
+        <p><strong>Delivery Address:</strong> {deliveryAddress}</p>
+        <p><strong>Status:</strong> {order.status}</p>
+
         <button
           onClick={onClose}
           style={{
-            backgroundColor: "#28a745",
+            marginTop: "15px",
+            backgroundColor: "#007bff",
             color: "#fff",
-            padding: "10px 20px",
             border: "none",
+            padding: "10px 20px",
             borderRadius: "6px",
             cursor: "pointer",
-            marginTop: "10px",
           }}
         >
           Close
@@ -53,142 +58,4 @@ const OrderConfirmationModal = ({ order, onClose }) => {
   );
 };
 
-const OrderNowModel = ({ material, onClose, onOrderPlaced }) => {
-  const [quantity, setQuantity] = useState(1);
-  const [address, setAddress] = useState("");
-  const [confirmedOrder, setConfirmedOrder] = useState(null);
-
-  const currentUser = JSON.parse(sessionStorage.getItem("current-user"));
-
-  const handlePlaceOrder = async () => {
-    if (!address) {
-      alert("Please enter delivery address!");
-      return;
-    }
-
-    try {
-      const res = await axios.post("http://localhost:5000/order", {
-        material: material._id,
-        seller: material.submittedBy._id,
-        buyer: currentUser._id,
-        quantity: Number(quantity),
-        totalPrice: Number(quantity) * Number(material.price),
-        address,
-        images: material.images || [],
-      });
-
-      // Show confirmation modal
-      setConfirmedOrder(res.data.order);
-
-    } catch (err) {
-      console.error("Order placement error:", err.response || err);
-      alert("❌ Failed to place order!");
-    }
-  };
-
-  return (
-    <div>
-      {/* Main Order Modal */}
-      <div style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "rgba(0, 0, 0, 0.6)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 1000,
-        padding: "10px",
-      }}>
-        <div style={{
-          backgroundColor: "#fff",
-          borderRadius: "12px",
-          width: "100%",
-          maxWidth: "450px",
-          padding: "25px",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "15px",
-        }}>
-          <h2 style={{ margin: 0 }}>{material.title}</h2>
-          <p style={{ margin: "5px 0" }}>Price per unit: <strong>₹{material.price}</strong></p>
-          <p style={{ margin: "5px 0" }}>Available Stock: <strong>{material.quantity}</strong></p>
-
-          <input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            min={1}
-            max={material.quantity}
-            style={{
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              width: "100%",
-            }}
-          />
-
-          <input
-            type="text"
-            placeholder="Enter delivery address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            style={{
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              width: "100%",
-            }}
-          />
-
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
-            <button
-              onClick={handlePlaceOrder}
-              style={{
-                backgroundColor: "#28a745",
-                color: "#fff",
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              Place Order
-            </button>
-            <button
-              onClick={onClose}
-              style={{
-                backgroundColor: "#dc3545",
-                color: "#fff",
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Order Confirmation Modal */}
-      {confirmedOrder && (
-        <OrderConfirmationModal
-          order={confirmedOrder}
-          onClose={() => {
-            setConfirmedOrder(null);
-            onClose(); // Close main modal
-            if (onOrderPlaced) onOrderPlaced(); // Notify parent
-          }}
-        />
-      )}
-    </div>
-  );
-};
-
-export default OrderNowModel;
-
+export default OrderConfirmationModal;

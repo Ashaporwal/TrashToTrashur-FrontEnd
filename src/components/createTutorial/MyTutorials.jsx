@@ -14,14 +14,15 @@ function MyTutorials({ crafterId }) {
 
   const fetchTutorials = async () => {
     try {
-const tutRes = await axios.get(
-  `http://localhost:5000/tutorial/mytutorials/${crafterId}`,
-  { headers: { Authorization: `Bearer ${token}` } }
-);
-     console.log("Tutorials Response:", tutRes.data); 
+      const tutRes = await axios.get(
+        `http://localhost:5000/tutorial/mytutorials/${crafterId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    setTutorials(tutRes.data.tutorials || tutRes.data);
-    //   setTutorials(res.data);
+      console.log("Tutorials Response:", tutRes.data);
+
+      setTutorials(tutRes.data.tutorials || tutRes.data);
+      console.log("One Tutorial Video:", tutRes.data.tutorials[0].video);
     } catch (err) {
       console.error("Failed to fetch tutorials:", err.response?.data || err.message);
     } finally {
@@ -38,6 +39,20 @@ const tutRes = await axios.get(
           <div key={tut._id} className="tutorial-card">
             <h3>{tut.title}</h3>
             <p>{tut.description}</p>
+
+            {/* ✅ Safe video render */}
+            {tut.video && (
+              <video controls width="400">
+                <source
+                  src={`http://localhost:5000/${
+                    typeof tut.video === "string" ? tut.video : tut.video.filename
+                  }`}
+                  type="video/mp4"
+                />
+                Your browser does not support the video tag.
+              </video>
+              
+            )}
           </div>
         ))
       ) : (
@@ -48,3 +63,4 @@ const tutRes = await axios.get(
 }
 
 export default MyTutorials;
+

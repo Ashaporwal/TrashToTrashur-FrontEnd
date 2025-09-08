@@ -5,9 +5,9 @@
   display: flex; 
   justify-content: center; 
   align-items: center;
-  z-index: 1000;
+  z-index: 999;
   padding: 10px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 .modal-card {
@@ -70,7 +70,7 @@
 }
 
 .cancel-btn {
-  background: #dc3545;
+  background: pink;
   color: #fff;
 }
 

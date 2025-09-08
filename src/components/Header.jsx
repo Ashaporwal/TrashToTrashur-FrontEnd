@@ -34,7 +34,7 @@ const role = sessionStorage.getItem("role");
       {/* Centered Links */}
     <div style={{ display: "flex", justifyContent: "center", flex: 1 }}>
   <Link to="/home" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Home</Link>
-  <Link to="/product" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Product</Link>
+  {/* <Link to="/product" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Product</Link> */}
   {/* <Link to="/material-crafter" style={{ margin: "0 15px", textDecoration: "none", color: "black" }}>Materials</Link> */}
   <Link
   to={role === "crafter" ? "/material-crafter" : "/material-buyer"}

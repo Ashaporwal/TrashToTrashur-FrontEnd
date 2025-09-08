@@ -38,7 +38,7 @@ import BuyerMaterialPage from './components/material/BuyerMaterialPage';
 import CrafterMaterialPage from './components/material/CrafterMaterialPage';
 
 import CrafterProfile from './components/User/CrafterProfile';
-// import BuyerProfile from './components/User/BuyerProfile';
+import BuyerProfile from './components/User/BuyerProfile';
 
 import MyOrdersPage from './components/Order/MyOrdersPage';
 
@@ -58,7 +58,7 @@ function App() {
         <Route path='/material-buyer' element={<BuyerMaterialPage/>}/>
         <Route path='/material-crafter' element={<CrafterMaterialPage/>}/>
 <Route path='/crafter-profile' element={<CrafterProfile/>}/>
-{/* <Route path="/buyer-profile" element={<BuyerProfile/>}/> */}
+<Route path="/buyer-profile" element={<BuyerProfile/>}/>
         {/* <Route path='/user' element={<UserProfile/>}/> */}
 
                 <Route path='/diyTutorials' element={<DiyTutorials/>}/>

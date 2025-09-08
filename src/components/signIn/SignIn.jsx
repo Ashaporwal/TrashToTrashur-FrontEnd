@@ -10,7 +10,7 @@ function SignIn() {
   const navigate = useNavigate();
   const location = useLocation();
   const [state, setState] = useState({ email: "", password: "" });
-  const [role, setRole] = useState("crafter"); // default role is crafter
+  const [role, setRole] = useState("crafter"); 
   const [showPassword, setShowPassword] = useState(false);
 
 
@@ -51,7 +51,7 @@ function SignIn() {
       toast.success("Logged in successfully!");
 
       // Redirect based on role
-      const redirectTo = location.state?.from || (user.role === "buyer" ? "/home" : "/product");
+      const redirectTo = location.state?.from || (user.role === "buyer" ? "/home" : "/");
       setTimeout(() => navigate(redirectTo), 1000);
 
     } catch (err) {
@@ -117,12 +117,12 @@ function SignIn() {
             {/* Submit */}
             <button type="submit" className="login-btn">Log In</button>
 
-            <p className="or-text">Or Continue With</p>
-            <div className="social-login">
+            {/* <p className="or-text">Or Continue With</p> */}
+            {/* <div className="social-login">
               <button className="social-btn google">G</button>
               <button className="social-btn facebook">F</button>
               <button className="social-btn apple"></button>
-            </div>
+            </div> */}
 
             <p className="signup-link">
               Don’t have an account? <Link to="/signup">Sign Up</Link>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./CrafterProfile.css";
-import MyTutorials from "../createTutorial/MyTutorials" // ✅ MyTutorials import
+import MyTutorials from "../createTutorial/MyTutorials";
 
 function CrafterProfile() {
   const [crafter, setCrafter] = useState(null);
@@ -11,7 +11,7 @@ function CrafterProfile() {
     email: "",
     contact: "",
     bio: "",
-    password: "",
+    profilePicture: "",
   });
   const [profileFile, setProfileFile] = useState(null);
 
@@ -22,7 +22,6 @@ function CrafterProfile() {
     fetchCrafter();
   }, [crafterId]);
 
-  // fetch crafter details (sirf user data, tutorials alag component handle karega)
   const fetchCrafter = async () => {
     try {
       const res = await axios.get(`http://localhost:5000/user/${crafterId}`, {
@@ -33,7 +32,7 @@ function CrafterProfile() {
       console.log("Fetched User Data:", userData);
 
       setCrafter(userData);
-      setFormData({ ...userData, password: "" });
+      setFormData({ ...userData });
     } catch (err) {
       console.error("Failed to fetch profile:", err.response?.data || err.message);
       if (err.response?.status === 401) {
@@ -41,7 +40,6 @@ function CrafterProfile() {
       }
     }
   };
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +53,6 @@ function CrafterProfile() {
       setFormData({ ...formData, profilePicture: URL.createObjectURL(file) });
     }
   };
-
 
   const handleSave = async () => {
     try {
@@ -82,17 +79,23 @@ function CrafterProfile() {
       setEditMode(false);
       setProfileFile(null);
 
-
-      fetchCrafter();
+      // Update crafter state from response
+      const updatedCrafter = res.data.updatedCrafter || res.data;
+      setCrafter(updatedCrafter);
+      setFormData({
+        ...formData,
+        profilePicture: updatedCrafter.profilePicture
+          ? `http://localhost:5000${updatedCrafter.profilePicture}`
+          : formData.profilePicture,
+      });
     } catch (err) {
       console.error("Failed to save profile:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Failed to update profile");
     }
   };
 
-
   const handleCancel = () => {
-    setFormData({ ...crafter, password: "" });
+    setFormData({ ...crafter });
     setEditMode(false);
     setProfileFile(null);
   };
@@ -108,7 +111,7 @@ function CrafterProfile() {
               profileFile
                 ? formData.profilePicture
                 : crafter.profilePicture
-                ? `http://localhost:5000/${crafter.profilePicture}`
+                ? `http://localhost:5000${crafter.profilePicture}`
                 : "/placeholder.png"
             }
             alt={formData.name || "Profile"}
@@ -125,7 +128,7 @@ function CrafterProfile() {
         </div>
 
         <div className="info-section">
-          {["name", "email", "contact", "bio", "password"].map((field) => (
+          {["name", "email", "contact", "bio"].map((field) => (
             <div className="info-row" key={field}>
               <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
               {editMode ? (
@@ -137,22 +140,14 @@ function CrafterProfile() {
                   />
                 ) : (
                   <input
-                    type={
-                      field === "email"
-                        ? "email"
-                        : field === "password"
-                        ? "password"
-                        : "text"
-                    }
+                    type={field === "email" ? "email" : "text"}
                     name={field}
                     value={formData[field] || ""}
                     onChange={handleChange}
                   />
                 )
               ) : (
-                <span>
-                  {field === "password" ? "••••••" : formData[field]}
-                </span>
+                <span>{formData[field]}</span>
               )}
             </div>
           ))}
@@ -176,14 +171,13 @@ function CrafterProfile() {
         </div>
       </div>
 
- <div className="tutorials-section">
-  <h2>Your Tutorials</h2>
-
-  <MyTutorials crafterId={crafterId} />
-</div>
-
+      <div className="tutorials-section">
+        <h2>Your Tutorials</h2>
+        <MyTutorials crafterId={crafterId} />
+      </div>
     </div>
   );
 }
 
 export default CrafterProfile;
+

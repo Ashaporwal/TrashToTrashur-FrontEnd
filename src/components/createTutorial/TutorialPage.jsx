@@ -1,8 +1,7 @@
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Header from "../Header";
 import Footer from "../Footer";
 import "./TutorialPage.css";
@@ -12,7 +11,6 @@ function TutorialPage() {
   const [myTutorials, setMyTutorials] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState("all");
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -20,7 +18,6 @@ function TutorialPage() {
     images: [],
     tutorialId: null,
   });
-
   const [commentText, setCommentText] = useState({});
 
   const currentUser = JSON.parse(sessionStorage.getItem("current-user"));
@@ -49,7 +46,10 @@ function TutorialPage() {
   // -------------------- Fetch Tutorials --------------------
   const fetchTutorials = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/tutorial/all");
+const res = await axios.get("http://localhost:5000/tutorial/all", {
+  params: { userId: currentUser?._id }
+});
+
       const tutorialsWithComments = await Promise.all(
         res.data.map(async (t) => {
           const comments = await fetchComments(t._id);
@@ -82,7 +82,7 @@ function TutorialPage() {
     }
   };
 
-  // -------------------- Form Handling --------------------
+
   const handleChange = (e) => {
     const { name, files, value } = e.target;
     if (name === "video") setFormData({ ...formData, video: files[0] });
@@ -104,52 +104,57 @@ function TutorialPage() {
 
     try {
       if (formData.tutorialId) {
-        await axios.put(`http://localhost:5000/tutorial/${formData.tutorialId}`, data, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-        alert("Tutorial updated successfully!");
+        await axios.put(
+          `http://localhost:5000/tutorial/${formData.tutorialId}`,
+          data,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+        toast.success("Tutorial updated successfully!");
       } else {
         await axios.post("http://localhost:5000/tutorial/create", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        alert("Tutorial uploaded successfully!");
+        toast.success("Tutorial uploaded successfully!");
       }
-      setFormData({ title: "", description: "", video: null, images: [], tutorialId: null });
+      setFormData({
+        title: "",
+        description: "",
+        video: null,
+        images: [],
+        tutorialId: null,
+      });
       setShowForm(false);
       fetchTutorials();
       fetchMyTutorials();
     } catch (err) {
       console.error("Upload failed:", err);
-      alert("Upload failed");
+      toast.error("Upload failed");
     }
   };
 
   // -------------------- Likes --------------------
   const handleLike = async (tutorialId) => {
-    if (!currentUserId) {
-      console.log(tutorialId);
-      alert("Login to like tutorials.");
-        
-      return;
-    }
-
     try {
-      const res = await axios.post(`http://localhost:5000/tutorial/${tutorialId}/like`, {
-        userId: currentUserId,
- 
-      });
-
-      const updated = displayedTutorials.map((t) =>
-        t._id === tutorialId
-          ? { ...t, likes: res.data.likesCount, likedBy: res.data.likedBy }
-          : t
+      if (!currentUserId) {
+        toast.error("Please login first to like tutorials");
+        return;
+      }
+      const res = await axios.post(
+        `http://localhost:5000/tutorial/${tutorialId}/like`,
+        { userId: currentUserId }
       );
+      toast.success(res.data.message);
 
-      if (filter === "my") setMyTutorials(updated);
-      else setTutorials(updated);
+      setTutorials((prev) =>
+        prev.map((t) =>
+          t._id === tutorialId
+            ? { ...t, likedBy: [...(t.likedBy || []), currentUserId] }
+            : t
+        )
+      );
     } catch (err) {
       console.error("Like failed:", err);
-      alert("Failed to like tutorial");
+      toast.error(err.response?.data?.message || "Failed to like tutorial");
     }
   };
 
@@ -168,7 +173,7 @@ function TutorialPage() {
       });
 
       if (res.data.comment) {
-        const newComment = { user: { name: currentUser.name }, text };
+        const newComment = res.data.comment; 
         const updated = displayedTutorials.map((t) =>
           t._id === tutorialId
             ? { ...t, comments: [...(t.comments || []), newComment] }
@@ -309,21 +314,27 @@ const TutorialCard = ({
   setFormData,
   setShowForm,
 }) => {
+  const [expandedComments, setExpandedComments] = useState({}); // ✅ added
   const currentUserId = currentUser?._id;
   const uploaderId = tutorial.uploadedBy?._id;
   const uploaderName = tutorial.uploadedBy?.name || "Anonymous";
 
-  const liked = tutorial.likedBy?.includes(currentUserId);
+  const liked = (tutorial.likedBy || []).some(
+    (id) => id.toString() === currentUserId?.toString()
+  );
 
   return (
     <div className="tutorial-card">
       {tutorial.video && (
         <video
           className="tutorial-video"
-          src={`http://localhost:5000/uploads/${tutorial.video?.filename || tutorial.video}`}
+          src={`http://localhost:5000/uploads/${
+            tutorial.video?.filename || tutorial.video
+          }`}
           controls
         />
       )}
+
       {tutorial.images?.length > 0 && (
         <div className="tutorial-images">
           {tutorial.images.map((img, idx) => (
@@ -368,7 +379,10 @@ const TutorialCard = ({
           >
             ✏️ Edit
           </button>
-          <button className="delete-btn" onClick={() => handleDelete(tutorial._id)}>
+          <button
+            className="delete-btn"
+            onClick={() => handleDelete(tutorial._id)}
+          >
             🗑️ Delete
           </button>
         </div>
@@ -381,7 +395,7 @@ const TutorialCard = ({
             style={{ background: liked ? "red" : "grey" }}
             onClick={() => handleLike(tutorial._id)}
           >
-            {liked ? "❤️ Liked" : "🤍 Like"} ({tutorial.likes || 0})
+            {liked ? "❤️ Liked" : "🤍 Like"} ({tutorial.likedBy?.length || 0})
           </button>
 
           <input
@@ -389,27 +403,55 @@ const TutorialCard = ({
             placeholder="Add comment..."
             value={commentText[tutorial._id] || ""}
             onChange={(e) =>
-              setCommentText({ ...commentText, [tutorial._id]: e.target.value })
+              setCommentText({
+                ...commentText,
+                [tutorial._id]: e.target.value,
+              })
             }
           />
-          <button className="comment-btn" onClick={() => handleComment(tutorial._id)}>
+          <button
+            className="comment-btn"
+            onClick={() => handleComment(tutorial._id)}
+          >
             Comment
           </button>
         </div>
       )}
 
+
       <div className="tutorial-comments">
-        {tutorial.comments?.map((c, idx) => (
-          <div className="comment-text" key={idx}>
-            <b>{c.user?.name || "Anonymous"}:</b> {c.text}
-          </div>
-        ))}
-      </div>
+  {(expandedComments[tutorial._id]
+    ? tutorial.comments
+    : tutorial.comments?.slice(-1) // latest comment
+  )?.map((c, idx) => (
+    <div className="comment-text" key={idx}>
+      <b>{c.user?.name || "Anonymous"}:</b> {c.text}
+    </div>
+  ))}
+
+  {tutorial.comments?.length > 1 && (
+    <span
+      className="show-more-text"
+      onClick={() =>
+        setExpandedComments((prev) => ({
+          ...prev,
+          [tutorial._id]: !prev[tutorial._id],
+        }))
+      }
+      style={{ color: "brown", cursor: "pointer", display: "inline-block", marginTop: "5px" }}
+    >
+      {expandedComments[tutorial._id] ? "Show Less" : "Show More"}
+    </span>
+  )}
+</div>
+
     </div>
   );
 };
 
 export default TutorialPage;
+
+
 
 
 
